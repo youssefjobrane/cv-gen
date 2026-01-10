@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Youssef Jobrane</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.0/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-black: #000000;
+            --text-gray: #333333;
+            --light-gray: #666666;
+            --timeline-line: #ccc;
+            --timeline-dot: #000;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: var(--text-gray);
+        }
+
+        .no-print {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: #444;
+        }
+
+        .btn-generate {
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .cv-container {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 20px auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* Top Section */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            background: #f0f0f0;
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 32px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--primary-black);
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            margin-top: 10px;
+            font-weight: bold;
+            color: var(--text-gray);
+        }
+
+        .header-info {
+            font-size: 12px;
+            color: var(--light-gray);
+            margin-top: 5px;
+        }
+
+        /* Main Grid */
+        .cv-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 40px;
+        }
+
+        /* Left Column */
+        .sidebar {
+            text-align: center;
+        }
+
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-title::before, .sidebar-title::after {
+            content: "◦";
+            margin: 0 8px;
+        }
+
+        .sidebar-content {
+            font-size: 13px;
+            line-height: 1.8;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+        }
+
+        .sidebar-content a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Right Column */
+        .main-content {
+            border-left: none;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            color: var(--primary-black);
+        }
+
+        .section-header i {
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+        /* Timeline Styles */
+        .timeline-section {
+            position: relative;
+            padding-left: 25px;
+            margin: 30px 0;
+        }
+
+        /* Main timeline line */
+        .timeline-section::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--timeline-line);
+        }
+
+        /* Individual timeline items */
+        .timeline-item {
+            position: relative;
+            padding-bottom: 30px;
+            padding-left: 20px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        /* Timeline dot */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--timeline-dot);
+            box-shadow: 0 0 0 6px white, 0 0 0 4px white;
+            z-index: 1;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        .timeline-period {
+            font-size: 12px;
+            color: var(--light-gray);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .timeline-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 5px 0;
+            color: var(--primary-black);
+        }
+
+        .timeline-subtitle {
+            font-size: 12px;
+            color: var(--light-gray);
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        .content-block {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 25px;
+        }
+
+        .profile-text {
+            font-size: 13px;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .item-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0;
+            color: var(--primary-black);
+        }
+
+        .item-subtitle {
+            font-size: 12px;
+            color: var(--light-gray);
+            margin: 2px 0 8px 0;
+            font-style: italic;
+        }
+
+        .item-desc {
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .tasks-list {
+            padding-left: 20px;
+            margin: 8px 0;
+            font-size: 12.5px;
+        }
+
+        .tasks-list li {
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .tasks-list li {
+            margin-bottom: 5px;
+        }
+
+        .tech-stack {
+            font-size: 12px;
+            margin-top: 10px;
+            color: var(--text-gray);
+        }
+
+        .tech-stack b {
+            color: var(--primary-black);
+            font-weight: bold;
+        }
+
+        .tech-stack b {
+            color: var(--primary-black);
+        }
+
+        @media print {
+            body { background: white; }
+            .no-print { display: none; }
+            .cv-container {
+                margin: 0;
+                box-shadow: none;
+                width: 100%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Function to load JSON data
+        async function loadCVData() {
+            try {
+                const response = await fetch('cv-data.json');
+                if (!response.ok) {
+                    throw new Error('Failed to load CV data');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error loading CV data:', error);
+                return null;
+            }
+        }
+
+        // Function to render the CV
+        async function renderCV() {
+            const data = await loadCVData();
+            if (!data) {
+                console.error('No data available');
+                return;
+            }
+
+            // Update header
+            const header = document.querySelector('header');
+            if (header && data.personalInfo) {
+                header.innerHTML = `
+                    <h1>${data.personalInfo.name || ''}</h1>
+                    <div class="header-subtitle">${data.personalInfo.title || ''}</div>
+                    <div class="header-info">
+                        <i class="fas fa-map-marker-alt"></i> ${data.personalInfo.location || ''} &nbsp;&nbsp;
+                        <i class="fas fa-phone"></i> ${data.personalInfo.phone || ''}
+                    </div>
+                `;
+            }
+
+            // Update contact info
+            const contactContent = document.querySelector('.contact-content');
+            if (contactContent && data.personalInfo) {
+                contactContent.innerHTML = `
+                    ${data.personalInfo.location || ''}<br>
+                    ${data.personalInfo.phone || ''}<br>
+                    <a href="mailto:${data.personalInfo.email || ''}">${data.personalInfo.email || ''}</a>
+                `;
+            }
+
+            // Update profile
+            const profileText = document.querySelector('.profile-text');
+            if (profileText && data.profile) {
+                profileText.textContent = data.profile;
+            }
+
+            // Update skills
+            const skillsContent = document.querySelector('.skills-content');
+            if (skillsContent && data.skills) {
+                const skillsHTML = `
+                    <div style="display: flex; flex-wrap: wrap; gap: 4px; margin: 5px 0 15px 0;">
+                        ${data.skills.map(skill =>
+                            `<span style="display: inline-block;
+                                       margin: 0 6px 6px 0;
+                                       padding: 3px 10px;
+                                       background: #f5f5f5;
+                                       border: 1px solid #e0e0e0;
+                                       border-radius: 12px;
+                                       font-size: 13px;
+                                       color: #333;
+                                       white-space: nowrap;
+                                       box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                                ${skill}
+                            </span>`
+                        ).join('')}
+                    </div>`;
+                skillsContent.innerHTML = skillsHTML;
+            }
+
+            // Update languages
+            const languagesContent = document.querySelector('.languages-content');
+            if (languagesContent && data.languages) {
+                languagesContent.innerHTML = data.languages.map(lang =>
+                    `${lang.name} - ${lang.level || ''}`
+                ).join('<br>');
+            }
+
+            // Update experience with timeline
+            const experienceContainer = document.querySelector('.experience-container');
+            if (experienceContainer && data.experience) {
+                experienceContainer.innerHTML = `
+                    <div class="timeline-section">
+                        ${data.experience.map(exp => `
+                            <div class="timeline-item">
+                                <div class="timeline-content">
+                                    <div class="timeline-period">${exp.period || ''}</div>
+                                    <div class="timeline-title">${exp.position || ''}</div>
+                                    <div class="timeline-subtitle">${exp.company || ''}${exp.location ? ', ' + exp.location : ''}</div>
+                                    ${exp.projects ? exp.projects.map(project => `
+                                        <div class="project" style="margin-top: 15px;">
+                                            <div style="font-weight: 600; font-size: 13px; margin: 10px 0 5px 0;">${project.name || ''}</div>
+                                            ${project.period ? `<div class="project-period" style="font-size: 11px; color: var(--light-gray); margin-bottom: 5px;">${project.period}</div>` : ''}
+                                            ${project.team ? `<div class="project-team" style="font-size: 11px; color: var(--light-gray); margin-bottom: 8px;">${project.team}</div>` : ''}
+                                            ${project.methodology ? `<div class="project-methodology" style="font-size: 11px; color: var(--light-gray); margin-bottom: 8px;">${project.methodology}</div>` : ''}
+                                            ${project.description ? `<p class="project-description" style="font-size: 12px; line-height: 1.5; margin: 8px 0;">${project.description}</p>` : ''}
+                                            ${project.responsibilities && project.responsibilities.length > 0 ? `
+                                                <ul class="tasks-list" style="padding-left: 18px; margin: 8px 0; font-size: 12px;">
+                                                    ${project.responsibilities.map(resp =>
+                                                        `<li style="margin-bottom: 5px; line-height: 1.4;">${resp}</li>`
+                                                    ).join('')}
+                                                </ul>
+                                            ` : ''}
+                                            ${project.technologies && project.technologies.length > 0 ? `
+                                                <div class="tech-stack" style="font-size: 11px; margin-top: 10px; color: var(--light-gray);">
+                                                    <strong style="color: var(--primary-black);">Technologies:</strong>
+                                                    ${project.technologies.join(', ')}
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    `).join('') : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>`;
+            }
+
+            // Update education with timeline
+            const educationContainer = document.querySelector('.education-container');
+            if (educationContainer && data.education) {
+                educationContainer.innerHTML = `
+                    <div class="timeline-section">
+                        ${data.education.map(edu => `
+                            <div class="timeline-item">
+                                <div class="timeline-content">
+                                    <div class="timeline-period">${edu.period || ''}</div>
+                                    <div class="timeline-title">${edu.degree || ''}</div>
+                                    <div class="timeline-subtitle">${edu.institution || ''}${edu.location ? ', ' + edu.location : ''}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>`;
+            }
+
+            // Update soft skills
+            const softSkillsContent = document.querySelector('.soft-skills-content');
+            if (softSkillsContent && data.softSkills) {
+                softSkillsContent.innerHTML = data.softSkills.map(skill =>
+                    `<span class="soft-skill-tag">${skill}</span>`
+                ).join('');
+            }
+        }
+
+        // Initialize the CV when the page loads
+        document.addEventListener('DOMContentLoaded', renderCV);
+    </script>
+
+    <div class="no-print">
+        <button class="btn-generate" onclick="window.print()">Générer PDF</button>
+        <button class="btn-generate" onclick="location.reload()" style="margin-left: 10px;">Rafraîchir</button>
+    </div>
+
+    <div class="cv-container">
+        <header>
+            <img src="https://via.placeholder.com/100" alt="Youssef Jobrane" class="profile-img">
+            <h1>YOUSSEF JOBRANE</h1>
+            <div class="header-subtitle">DÉVELOPPEUR FULL STACK ANGULAR | JAVA</div>
+            <div class="header-info">
+                <i class="fas fa-map-marker-alt"></i> Tunis, Tunisia &nbsp;&nbsp;
+                <i class="fas fa-phone"></i> +216 55 243 382
+            </div>
+        </header>
+
+        <div class="cv-grid">
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Contact</div>
+                    <div class="sidebar-content contact-content">
+                        <!-- Contact info will be inserted here by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Compétences</div>
+                    <div class="sidebar-content skills-content">
+                        <!-- Skills will be inserted here by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Langues</div>
+                    <div class="sidebar-content languages-content">
+                        <!-- Languages will be inserted here by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Savoir-être</div>
+                    <div class="sidebar-content soft-skills-content">
+                        <!-- Soft skills will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="section">
+                    <div class="section-header"><i class="fas fa-user"></i> Profil</div>
+                    <div class="content-block">
+                        <div class="profile-text">
+                            <!-- Profile text will be inserted here by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header"><i class="fas fa-graduation-cap"></i> Formation</div>
+                    <div class="education-container">
+                        <!-- Education will be inserted here by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header"><i class="fas fa-briefcase"></i> Expérience Professionnelle</div>
+                    <div class="experience-container">
+                        <!-- Experience will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
