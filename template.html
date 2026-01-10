@@ -185,8 +185,12 @@
         /* Individual timeline items */
         .timeline-item {
             position: relative;
-            padding-bottom: 8px;
-            padding-left: 8px;
+            padding-bottom: 12px;
+            padding-left: 15px;
+        }
+        
+        .education-container .timeline-item {
+            padding-bottom: 15px;
         }
 
         .timeline-item:last-child {
@@ -446,10 +450,10 @@
                     <div class="timeline-section">
                         ${data.education.map(edu => `
                             <div class="timeline-item">
-                                <div class="timeline-content">
-                                    <div class="timeline-period">${edu.period || ''}</div>
-                                    <div class="timeline-title">${edu.degree || ''}</div>
-                                    <div class="timeline-subtitle">${edu.institution || ''}${edu.location ? ', ' + edu.location : ''}</div>
+                                <div class="timeline-content" style="padding: 8px 12px 8px 12px;">
+                                    <div class="timeline-title" style="font-size: 13px; margin: 0 0 2px 0; line-height: 1.2;">${edu.degree || ''}</div>
+                                    <div class="timeline-subtitle" style="font-size: 11px; margin: 0 0 2px 0; color: #666; line-height: 1.2;">${edu.institution || ''}${edu.location ? ', ' + edu.location : ''}</div>
+                                    <div class="timeline-period" style="font-size: 10px; color: #999; line-height: 1.2;">${edu.period || ''}</div>
                                 </div>
                             </div>
                         `).join('')}
