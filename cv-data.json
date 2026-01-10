@@ -1,10 +1,22 @@
 {
+  "sectionTitles": {
+    "personalInfo": "Informations Personnelles",
+    "languages": "Langues",
+    "skills": "Compétences Techniques",
+    "profile": "Profil",
+    "education": "Formation",
+    "experience": "Expérience Professionnelle",
+    "softSkills": "Compétences",
+    "contacts": "Contacts"
+  },
   "personalInfo": {
+    "photo": "https://res.cloudinary.com/dii5lcwfr/image/upload/v1768086047/new_o3ifkz.png",
     "name": "YOUSSEF JOBRANE",
     "title": "DÉVELOPPEUR FULL STACK ANGULAR | JAVA",
     "location": "Tunis, Tunisia",
     "phone": "+216 55 243 382",
-    "email": "youssefjobrane98@gmail.com"
+    "email": "youssefjobrane98@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/youssef-jobrane-0b7b1b1b2/"
   },
   "languages": [
     {
@@ -259,3 +271,4 @@
     "Stress Management"
   ]
 }
+

@@ -7,6 +7,38 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.0/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        .contact-content {
+            font-size: 13px;
+            line-height: 1.8;
+        }
+        .contact-content > div {
+            margin-bottom: 5px;
+        }
+        .contact-content a {
+            color: #0077b5; /* LinkedIn blue color */
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        .contact-content a i {
+            margin-right: 5px;
+        }
+        .contact-content a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Simple email link style */
+        .contact-content a {
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            margin: 2px 0;
+        }
+        .contact-content a i {
+            margin-right: 5px;
+        }
+    </style>
+    <style>
         :root {
             --primary-black: #000000;
             --text-gray: #333333;
@@ -339,17 +371,41 @@
                 return;
             }
 
-            // Update header
+            // Update profile image
+            const profileImage = document.getElementById('profile-image');
+            if (profileImage && data.personalInfo?.photo) {
+                profileImage.innerHTML = `<img src="${data.personalInfo.photo}" alt="${data.personalInfo.name || 'Profile'}" class="profile-img">`;
+            }
+
+            // Update header info
             const header = document.querySelector('header');
             if (header && data.personalInfo) {
-                header.innerHTML = `
-                    <h1>${data.personalInfo.name || ''}</h1>
-                    <div class="header-subtitle">${data.personalInfo.title || ''}</div>
-                    <div class="header-info">
-                        <i class="fas fa-map-marker-alt"></i> ${data.personalInfo.location || ''} &nbsp;&nbsp;
-                        <i class="fas fa-phone"></i> ${data.personalInfo.phone || ''}
-                    </div>
-                `;
+                const title = header.querySelector('h1');
+                const subtitle = header.querySelector('.header-subtitle');
+                const info = header.querySelector('.header-info');
+                
+                if (title) title.textContent = data.personalInfo.name || '';
+                if (subtitle && data.personalInfo.title) {
+                    subtitle.textContent = data.personalInfo.title;
+                }
+                if (info) {
+                    info.innerHTML = `
+                        <i class="fas fa-map-marker-alt"></i> ${data.personalInfo.location || 'Tunis, Tunisia'}
+                        ${data.personalInfo.phone ? `&nbsp;&nbsp;<i class="fas fa-phone"></i> ${data.personalInfo.phone}` : ''}
+                    `;
+                }
+            }
+
+            // Update section titles from JSON
+            if (data.sectionTitles) {
+                // Update all section titles
+                const sections = document.querySelectorAll('[data-section]');
+                sections.forEach(section => {
+                    const sectionId = section.getAttribute('data-section');
+                    if (data.sectionTitles[sectionId]) {
+                        section.textContent = data.sectionTitles[sectionId];
+                    }
+                });
             }
 
             // Update contact info
@@ -357,8 +413,16 @@
             if (contactContent && data.personalInfo) {
                 contactContent.innerHTML = `
                     ${data.personalInfo.location || ''}<br>
-                    ${data.personalInfo.phone || ''}<br>
-                    <a href="mailto:${data.personalInfo.email || ''}">${data.personalInfo.email || ''}</a>
+                    <a href="tel:${data.personalInfo.phone || ''}">
+                        <i class="fas fa-phone"></i> ${data.personalInfo.phone || ''}
+                    </a>
+                    <a href="${data.personalInfo.linkedin || ''}" target="_blank">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                    <a href="mailto:${data.personalInfo.email || ''}">
+                        <i class="fas fa-envelope"></i> Gmail
+                    </a>
+
                 `;
             }
 
@@ -480,40 +544,40 @@
 
     <div class="cv-container">
         <header>
-            <img src="https://via.placeholder.com/100" alt="Youssef Jobrane" class="profile-img">
-            <h1>YOUSSEF JOBRANE</h1>
+            <div id="profile-image"></div>
+            <h1>${data.personalInfo?.name || ''}</h1>
             <div class="header-subtitle">DÉVELOPPEUR FULL STACK ANGULAR | JAVA</div>
             <div class="header-info">
-                <i class="fas fa-map-marker-alt"></i> Tunis, Tunisia &nbsp;&nbsp;
-                <i class="fas fa-phone"></i> +216 55 243 382
+                <i class="fas fa-map-marker-alt"></i> ${data.personalInfo?.location || 'Tunis, Tunisia'}
+                ${data.personalInfo?.phone ? `<i class="fas fa-phone"></i> ${data.personalInfo.phone}` : ''}
             </div>
         </header>
 
         <div class="cv-grid">
             <aside class="sidebar">
                 <div class="sidebar-section">
-                    <div class="sidebar-title">Contact</div>
+                    <h3 data-section="contacts"></h3>
                     <div class="sidebar-content contact-content">
                         <!-- Contact info will be inserted here by JavaScript -->
                     </div>
                 </div>
 
                 <div class="sidebar-section">
-                    <div class="sidebar-title">Compétences</div>
+                    <h3 data-section="skills"></h3>
                     <div class="sidebar-content skills-content">
                         <!-- Skills will be inserted here by JavaScript -->
                     </div>
                 </div>
 
                 <div class="sidebar-section">
-                    <div class="sidebar-title">Langues</div>
+                    <h3 data-section="languages"></h3>
                     <div class="sidebar-content languages-content">
                         <!-- Languages will be inserted here by JavaScript -->
                     </div>
                 </div>
 
                 <div class="sidebar-section">
-                    <div class="sidebar-title">Savoir-être</div>
+                    <h3 data-section="softSkills"></h3>
                     <div class="sidebar-content soft-skills-content">
                         <!-- Soft skills will be inserted here by JavaScript -->
                     </div>
@@ -522,7 +586,7 @@
 
             <main class="main-content">
                 <div class="section">
-                    <div class="section-header"><i class="fas fa-user"></i> Profil</div>
+                    <h3 data-section="profile"></h3>
                     <div class="content-block">
                         <div class="profile-text">
                             <!-- Profile text will be inserted here by JavaScript -->
@@ -531,14 +595,14 @@
                 </div>
 
                 <div class="section">
-                    <div class="section-header"><i class="fas fa-graduation-cap"></i> Formation</div>
+                    <h3 data-section="education"></h3>
                     <div class="education-container">
                         <!-- Education will be inserted here by JavaScript -->
                     </div>
                 </div>
 
                 <div class="section">
-                    <div class="section-header"><i class="fas fa-briefcase"></i> Expérience Professionnelle</div>
+                    <h3 data-section="experience"></h3>
                     <div class="experience-container">
                         <!-- Experience will be inserted here by JavaScript -->
                     </div>
