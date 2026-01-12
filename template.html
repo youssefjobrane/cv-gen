@@ -1,12 +1,41 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" id="htmlLang">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CV Youssef Jobrane</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.0/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+        .language-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .language-btn:hover {
+            background: #f5f5f5;
+        }
+        .language-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
         .contact-content {
             font-size: 13px;
             line-height: 1.8;
@@ -349,23 +378,35 @@
 </head>
 <body>
     <script>
-        // Function to load JSON data
-        async function loadCVData() {
+        // Current language state
+        let currentLanguage = 'fr';
+
+        // Function to load JSON data based on language
+        async function loadCVData(lang = 'fr') {
             try {
-                const response = await fetch('cv-data.json');
+                const filename = lang === 'en' ? 'cv-data-en.json' : 'cv-data.json';
+                const response = await fetch(filename);
                 if (!response.ok) {
                     throw new Error('Failed to load CV data');
                 }
                 return await response.json();
             } catch (error) {
                 console.error('Error loading CV data:', error);
+                // Fallback to French if English fails
+                if (lang === 'en') {
+                    console.log('Falling back to French version');
+                    return loadCVData('fr');
+                }
                 return null;
             }
         }
 
         // Function to render the CV
-        async function renderCV() {
-            const data = await loadCVData();
+        async function renderCV(lang = currentLanguage) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+            
+            const data = await loadCVData(lang);
             if (!data) {
                 console.error('No data available');
                 return;
@@ -546,7 +587,26 @@
         }
 
         // Initialize the CV when the page loads
-        document.addEventListener('DOMContentLoaded', renderCV);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add language switcher to the page
+            const header = document.querySelector('header');
+            if (header) {
+                const languageSwitcher = document.createElement('div');
+                languageSwitcher.className = 'language-switcher';
+                languageSwitcher.innerHTML = `
+                    <button onclick="renderCV('fr')" class="language-btn ${currentLanguage === 'fr' ? 'active' : ''}">
+                        <span class="flag-icon flag-icon-fr"></span> FR
+                    </button>
+                    <button onclick="renderCV('en')" class="language-btn ${currentLanguage === 'en' ? 'active' : ''}">
+                        <span class="flag-icon flag-icon-gb"></span> EN
+                    </button>
+                `;
+                document.body.insertBefore(languageSwitcher, document.body.firstChild);
+            }
+            
+            // Initial render
+            renderCV(currentLanguage);
+        });
     </script>
 
     <div class="no-print">
