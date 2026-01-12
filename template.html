@@ -26,7 +26,7 @@
         .contact-content a:hover {
             text-decoration: underline;
         }
-        
+
         /* Simple email link style */
         .contact-content a {
             text-decoration: none;
@@ -220,7 +220,7 @@
             padding-bottom: 12px;
             padding-left: 15px;
         }
-        
+
         .education-container .timeline-item {
             padding-bottom: 15px;
         }
@@ -383,7 +383,7 @@
                 const title = header.querySelector('h1');
                 const subtitle = header.querySelector('.header-subtitle');
                 const info = header.querySelector('.header-info');
-                
+
                 if (title) title.textContent = data.personalInfo.name || '';
                 if (subtitle && data.personalInfo.title) {
                     subtitle.textContent = data.personalInfo.title;
@@ -471,6 +471,8 @@
             // Update experience with timeline
             const experienceContainer = document.querySelector('.experience-container');
             if (experienceContainer && data.experience) {
+                const sectionTitles = data.sectionTitles;
+
                 experienceContainer.innerHTML = `
                     <div class="timeline-section">
                         ${data.experience.map(exp => `
@@ -482,9 +484,19 @@
                                     ${exp.projects ? exp.projects.map(project => `
                                         <div class="project" style="margin-top: 15px;">
                                             <div style="font-weight: 600; font-size: 13px; margin: 10px 0 5px 0;">${project.name || ''}</div>
-                                            ${project.period ? `<div class="project-period" style="font-size: 11px; color: var(--light-gray); margin-bottom: 5px;">${project.period}</div>` : ''}
-                                            ${project.team ? `<div class="project-team" style="font-size: 11px; color: var(--light-gray); margin-bottom: 8px;">${project.team}</div>` : ''}
-                                            ${project.methodology ? `<div class="project-methodology" style="font-size: 11px; color: var(--light-gray); margin-bottom: 8px;">${project.methodology}</div>` : ''}
+                                          ${project.period ? `<div class="project-period" style="font-size: 11px; color: var(--light-gray); margin-bottom: 5px;">${project.period}</div>` : ''}
+                                                ${project.team ? `
+                                                    <div class="project-team" style="font-size: 11px; margin-top: 10px; color: var(--light-gray);">
+                                                        <strong style="color: var(--primary-black);">${sectionTitles?.team || 'Team'}:</strong>
+                                                        ${project.team}
+                                                    </div>
+                                                ` : ''}
+                                                ${project.methodology ? `
+                                                    <div class="project-methodology" style="font-size: 11px; margin-top: 10px; color: var(--light-gray);">
+                                                        <strong style="color: var(--primary-black);">${sectionTitles?.methodology || 'Methodology'}:</strong>
+                                                        ${project.methodology}
+                                                    </div>
+                                                ` : ''}
                                             ${project.description ? `<p class="project-description" style="font-size: 12px; line-height: 1.5; margin: 8px 0;">${project.description}</p>` : ''}
                                             ${project.responsibilities && project.responsibilities.length > 0 ? `
                                                 <ul class="tasks-list" style="padding-left: 18px; margin: 8px 0; font-size: 12px;">
@@ -495,7 +507,7 @@
                                             ` : ''}
                                             ${project.technologies && project.technologies.length > 0 ? `
                                                 <div class="tech-stack" style="font-size: 11px; margin-top: 10px; color: var(--light-gray);">
-                                                    <strong style="color: var(--primary-black);">Technologies:</strong>
+                                                    <strong style="color: var(--primary-black);">${sectionTitles?.technologies || 'Technologies'}:</strong>
                                                     ${project.technologies.join(', ')}
                                                 </div>
                                             ` : ''}
