@@ -6,30 +6,33 @@
     "profile": "Profil",
     "education": "Formation",
     "experience": "Expérience Professionnelle",
-    "softSkills": "Compétences",
-    "contacts": "Contacts"
+    "softSkills": "Qualités",
+    "contacts": "Contacts",
+    "team": "Équipe",
+    "methodology": "Méthodologie",
+    "technologies": "Technologies"
   },
   "personalInfo": {
     "photo": "https://res.cloudinary.com/dii5lcwfr/image/upload/v1768086047/new_o3ifkz.png",
     "name": "YOUSSEF JOBRANE",
     "title": "DÉVELOPPEUR FULL STACK ANGULAR | JAVA",
-    "location": "Tunis, Tunisia",
+    "location": "Tunis, Tunisie",
     "phone": "+216 55 243 382",
     "email": "youssefjobrane98@gmail.com",
     "linkedin": "https://www.linkedin.com/in/youssef-jobrane-0b7b1b1b2/"
   },
   "languages": [
     {
-      "name": "Arabic",
-      "level": "Native"
+      "name": "Arabe",
+      "level": "Langue maternelle"
     },
     {
-      "name": "French",
-      "level": "Professional"
+      "name": "Français",
+      "level": "Professionnel"
     },
     {
-      "name": "English",
-      "level": "Professional"
+      "name": "Anglais",
+      "level": "Professionnel"
     }
   ],
   "skills": [
@@ -52,38 +55,38 @@
     "Jira",
     "Scrum"
   ],
-  "profile": "Passionate Full Stack Web Developer, I design high-performance and scalable web applications using Angular and Spring Boot. I have completed projects such as Stripe integration and UX optimization with NgRx. Expert in TypeScript, Java, REST APIs, and Keycloak, I master both front-end and back-end to create robust solutions. Accustomed to Agile, I perform code reviews and mentor colleagues, fostering collaboration and final product quality.",
+  "profile": "Développeur Web Full Stack passionné, je conçois des applications web performantes et évolutives en utilisant Angular et Spring Boot. J'ai réalisé des projets complexes tels que l'intégration de Stripe et l'optimisation de l'expérience utilisateur (UX) avec NgRx. Expert en TypeScript, Java, API REST et Keycloak, je maîtrise aussi bien le front-end que le back-end pour créer des solutions robustes. Habitué aux environnements Agile, je réalise des revues de code et j'accompagne mes collègues, favorisant ainsi la collaboration et la qualité du produit final.",
   "education": [
     {
-      "degree": "Computer Engineering Degree",
+      "degree": "Diplôme d'Ingénieur en Informatique",
       "institution": "ESPRIM",
       "location": "Monastir",
-      "period": "Sept 2021 — July 2024"
+      "period": "Sept 2021 — Juil 2024"
     },
     {
-      "degree": "Applied Bachelor in Computer Systems and Software",
+      "degree": "Licence Appliquée en Systèmes Informatiques et Logiciels",
       "institution": "ISIMM",
       "location": "Monastir",
-      "period": "Sept 2017 — June 2021"
+      "period": "Sept 2017 — Juin 2021"
     }
   ],
   "experience": [
     {
-      "position": "Full Stack Angular | Java Developer",
+      "position": "Développeur Full Stack Angular | Java",
       "company": "Value Digital Service",
       "location": "Tunis",
-      "period": "April 2024 — Present",
+      "period": "Avril 2024 — Présent",
       "projects": [
         {
           "name": "Retail Banking Hub – BIAT",
-          "period": "May 2025 — Present",
-          "team": "Business Analyst, 3 Developers, Tech Lead, Tester",
+          "period": "Mai 2025 — Présent",
+          "team": "Analyste Business, 3 Développeurs, Tech Lead, Testeur",
           "methodology": "Agile Scrum",
-          "description": "Designing an intelligent platform improving customer relations and increasing commercial performance by 15%.",
+          "description": "Conception d'une plateforme intelligente améliorant les relations clients et augmentant la performance commerciale de 15%.",
           "responsibilities": [
-            "Structured Angular project using scalable architecture and modularity",
-            "Integrated Spring Boot REST APIs and optimized UX/UI standards",
-            "Conducted manual and regression testing to ensure functional validation"
+            "Structuration du projet Angular en utilisant une architecture évolutive et modulaire",
+            "Intégration des API REST Spring Boot et optimisation des standards UX/UI",
+            "Réalisation de tests manuels et de régression pour garantir la validation fonctionnelle"
           ],
           "technologies": [
             "Angular 19",
@@ -97,9 +100,9 @@
         {
           "name": "BIAT Capital Risque",
           "period": "Avril 2024 – Mai 2025",
-          "team": "Business Analyst, 2 Développeurs, Tech Lead, Testeur",
+          "team": "Analyste Business, 2 Développeurs, Tech Lead, Testeur",
           "methodology": "Agile Scrum",
-          "description": "Développement d'une plateforme numérique pour gérer les investissements en capital risque de la BIAT. L'outil permet de suivre les investissements, analyser les performances des startups financées et faciliter la gestion des portefeuilles, tout en améliorant la transparence et l'efficacité de la gestion des fonds.",
+          "description": "Développement d'une plateforme numérique pour gérer les investissements en capital-risque de la BIAT. L'outil permet de suivre les investissements, d'analyser les performances des startups financées et de faciliter la gestion de portefeuilles, tout en améliorant la transparence et l'efficacité de la gestion des fonds.",
           "responsibilities": [
             "Structuration claire du projet Angular pour une architecture modulaire et maintenable",
             "Implémentation de la logique métier avec Spring Boot pour des API REST performantes",
@@ -131,7 +134,7 @@
       "position": "Développeur Full Stack Angular | Java",
       "company": "Satoripop",
       "location": "Sousse",
-      "period": "novembre 2021 — mars 2024",
+      "period": "Novembre 2021 — Mars 2024",
       "projects": [
         {
           "name": "The Bridge Funding Global",
@@ -174,7 +177,7 @@
           "period": "Juillet 2022 – Avril 2023",
           "team": "Product Owner, 2 Développeurs web, Team Lead, Testeur",
           "methodology": "Agile Scrum",
-          "description": "Plateforme de suivi de chaîne alimentaire permettant d'enregistrer et tracer les olives, café et cacao, avec génération de QR codes retraçant leur parcours.",
+          "description": "Plateforme de suivi de la chaîne alimentaire permettant de tracer les olives, le café et le cacao, avec génération de QR codes retraçant leur parcours.",
           "responsibilities": [
             "Personnalisation du thème Keycloak pour un SSO sécurisé",
             "Structuration du projet Angular pour une gestion efficace du code source",
@@ -211,7 +214,7 @@
           "responsibilities": [
             "Création de tableaux de bord statistiques avec Apex Charts",
             "Optimisation de l'UX/UI en collaboration avec l'équipe design",
-            "Développement d'interfaces et composants réutilisables",
+            "Développement d'interfaces et de composants réutilisables",
             "Intégration sécurisée avec le back-end Spring Boot"
           ],
           "technologies": [
@@ -240,7 +243,7 @@
           "description": "Automatisation des tests de l'application bancaire Temenos T24 afin d'améliorer la précision des résultats et réduire les délais de validation.",
           "responsibilities": [
             "Création de visualisations de données avec Apex Charts",
-            "Élaboration d'organigrammes illustrant les relations entités",
+            "Élaboration d'organigrammes illustrant les relations entre entités",
             "Optimisation de l'UX/UI et développement de composants Angular réutilisables",
             "Intégration avec le Back-End en collaboration avec l'équipe serveur"
           ],
@@ -264,11 +267,10 @@
     }
   ],
   "softSkills": [
-    "Problem Solving",
-    "Adaptability",
-    "Collaboration",
-    "Analytical Thinking",
-    "Stress Management"
+    "Résolution de problèmes",
+    "Adaptabilité",
+    "Esprit d'équipe",
+    "Pensée analytique",
+    "Gestion du stress"
   ]
 }
-
