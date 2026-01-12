@@ -384,7 +384,7 @@
         // Function to load JSON data based on language
         async function loadCVData(lang = 'fr') {
             try {
-                const filename = lang === 'en' ? 'cv-data-en.json' : 'cv-data.json';
+                const filename = lang === 'en' ? 'cv-data-en.json' : 'cv-data-fr.json';
                 const response = await fetch(filename);
                 if (!response.ok) {
                     throw new Error('Failed to load CV data');
