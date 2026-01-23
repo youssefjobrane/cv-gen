@@ -398,7 +398,9 @@
                 if (!response.ok) {
                     throw new Error('Failed to load CV data');
                 }
-                return await response.json();
+                const data = await response.json();
+                window.cvData = data; // Store the loaded data
+                return data;
             } catch (error) {
                 console.error('Error loading CV data:', error);
                 // Fallback to French if English fails
@@ -429,10 +431,17 @@
                 }
             });
             
-            const data = await loadCVData(lang);
-            if (!data) {
-                console.error('No data available');
-                return;
+            let data;
+            if (window.cvData) {
+                // Use the loaded JSON data if available
+                data = window.cvData;
+            } else {
+                // Otherwise, load from the default JSON files
+                data = await loadCVData(lang);
+                if (!data) {
+                    console.error('No data available');
+                    return;
+                }
             }
 
             // Update profile image
@@ -609,8 +618,57 @@
             }
         }
 
+        // Function to handle file upload
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const jsonData = JSON.parse(e.target.result);
+                // Update the CV with the loaded data
+                if (window.cvData) {
+                    window.cvData = { ...window.cvData, ...jsonData };
+                } else {
+                    window.cvData = jsonData;
+                }
+                renderCV(currentLanguage);
+            };
+            reader.readAsText(file);
+        }
+
+        // Add file input to the page
+        function addFileUploadButton() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.json';
+            fileInput.style.display = 'none';
+            fileInput.addEventListener('change', handleFileUpload);
+            
+            const uploadButton = document.createElement('button');
+            uploadButton.textContent = 'Load JSON CV';
+            uploadButton.style.position = 'fixed';
+            uploadButton.style.top = '20px';
+            uploadButton.style.left = '20px';
+            uploadButton.style.padding = '8px 16px';
+            uploadButton.style.backgroundColor = '#007bff';
+            uploadButton.style.color = 'white';
+            uploadButton.style.border = 'none';
+            uploadButton.style.borderRadius = '4px';
+            uploadButton.style.cursor = 'pointer';
+            uploadButton.style.zIndex = '1000';
+            uploadButton.onclick = (e) => {
+                e.preventDefault();
+                fileInput.click();
+            };
+            
+            document.body.appendChild(fileInput);
+            document.body.appendChild(uploadButton);
+        }
+
         // Initialize the CV when the page loads
         document.addEventListener('DOMContentLoaded', () => {
+            addFileUploadButton();
             // Add language switcher to the page
             const languageSwitcher = document.createElement('div');
             languageSwitcher.className = 'language-switcher';
