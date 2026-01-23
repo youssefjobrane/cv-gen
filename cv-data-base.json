@@ -1,0 +1,276 @@
+{
+  "sectionTitles": {
+    "personalInfo": "Informations Personnelles",
+    "languages": "Langues",
+    "skills": "Compétences Techniques",
+    "profile": "Profil",
+    "education": "Formation",
+    "experience": "Expérience Professionnelle",
+    "softSkills": "Qualités",
+    "contacts": "Contacts",
+    "team": "Équipe",
+    "methodology": "Méthodologie",
+    "technologies": "Technologies"
+  },
+  "personalInfo": {
+    "photo": "https://res.cloudinary.com/dii5lcwfr/image/upload/v1768228994/me_e0507b.jpg",
+    "name": "YOUSSEF JOBRANE",
+    "title": "DÉVELOPPEUR FULL STACK ANGULAR | JAVA",
+    "location": "Tunis, Tunisie",
+    "phone": "+216 55 243 382",
+    "email": "youssefjobrane98@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/youssef-jobrane-0b7b1b1b2/"
+  },
+  "languages": [
+    {
+      "name": "Arabe",
+      "level": "Langue maternelle"
+    },
+    {
+      "name": "Français",
+      "level": "Professionnel"
+    },
+    {
+      "name": "Anglais",
+      "level": "Professionnel"
+    }
+  ],
+  "skills": [
+    "Angular",
+    "HTML/SCSS",
+    "Bootstrap",
+    "Tailwind",
+    "TypeScript",
+    "NgRx",
+    "Java",
+    "Spring Framework",
+    "REST APIs",
+    "Keycloak",
+    "Docker",
+    "Jenkins",
+    "Kubernetes",
+    "PostgreSQL",
+    "MySQL",
+    "Git",
+    "Jira",
+    "Scrum"
+  ],
+  "profile": "Développeur Web Full Stack passionné, je conçois des applications web performantes et évolutives en utilisant Angular et Spring Boot. J'ai réalisé des projets complexes tels que l'intégration de Stripe et l'optimisation de l'expérience utilisateur (UX) avec NgRx. Expert en TypeScript, Java, API REST et Keycloak, je maîtrise aussi bien le front-end que le back-end pour créer des solutions robustes. Habitué aux environnements Agile, je réalise des revues de code et j'accompagne mes collègues, favorisant ainsi la collaboration et la qualité du produit final.",
+  "education": [
+    {
+      "degree": "Diplôme d'Ingénieur en Informatique",
+      "institution": "ESPRIM",
+      "location": "Monastir",
+      "period": "Sept 2021 — Juil 2024"
+    },
+    {
+      "degree": "Licence Appliquée en Systèmes Informatiques et Logiciels",
+      "institution": "ISIMM",
+      "location": "Monastir",
+      "period": "Sept 2017 — Juin 2021"
+    }
+  ],
+  "experience": [
+    {
+      "position": "Développeur Full Stack Angular | Java",
+      "company": "Value Digital Service",
+      "location": "Tunis",
+      "period": "Avril 2024 — Présent",
+      "projects": [
+        {
+          "name": "Retail Banking Hub – BIAT",
+          "period": "Mai 2025 — Présent",
+          "team": "Analyste Business, 3 Développeurs, Tech Lead, Testeur",
+          "methodology": "Agile Scrum",
+          "description": "Conception d'une plateforme intelligente améliorant les relations clients et augmentant la performance commerciale de 15%.",
+          "responsibilities": [
+            "Structuration du projet Angular en utilisant une architecture évolutive et modulaire",
+            "Intégration des API REST Spring Boot et optimisation des standards UX/UI",
+            "Réalisation de tests manuels et de régression pour garantir la validation fonctionnelle"
+          ],
+          "technologies": [
+            "Angular 19",
+            "HTML",
+            "SCSS",
+            "Jira",
+            "Jenkins",
+            "Git"
+          ]
+        },
+        {
+          "name": "BIAT Capital Risque",
+          "period": "Avril 2024 – Mai 2025",
+          "team": "Analyste Business, 2 Développeurs, Tech Lead, Testeur",
+          "methodology": "Agile Scrum",
+          "description": "Développement d'une plateforme numérique pour gérer les investissements en capital-risque de la BIAT. L'outil permet de suivre les investissements, d'analyser les performances des startups financées et de faciliter la gestion de portefeuilles, tout en améliorant la transparence et l'efficacité de la gestion des fonds.",
+          "responsibilities": [
+            "Structuration claire du projet Angular pour une architecture modulaire et maintenable",
+            "Implémentation de la logique métier avec Spring Boot pour des API REST performantes",
+            "Conception et développement d'interfaces avec HTML, CSS, TypeScript",
+            "Création de composants réutilisables (boutons, formulaires, modales...)",
+            "Réalisation de tests système et de régression après correction des anomalies",
+            "Débogage, évolutions et optimisations du code"
+          ],
+          "technologies": [
+            "Angular 14",
+            "Java 11",
+            "Spring Boot",
+            "Spring Security",
+            "Maven",
+            "Keycloak 18",
+            "OAuth2",
+            "Bootstrap",
+            "SCSS",
+            "PostgreSQL",
+            "Jira",
+            "Jenkins",
+            "Git",
+            "Microservices"
+          ]
+        }
+      ]
+    },
+    {
+      "position": "Développeur Full Stack Angular | Java",
+      "company": "Satoripop",
+      "location": "Sousse",
+      "period": "Novembre 2021 — Mars 2024",
+      "projects": [
+        {
+          "name": "The Bridge Funding Global",
+          "period": "Avril 2023 – Mars 2024",
+          "team": "Product Owner, 3 Développeurs, Tech Lead, Team Lead, Testeur",
+          "methodology": "Agile Scrum",
+          "description": "Plateforme de collecte de fonds dédiée aux femmes gestionnaires émergentes, visant à simplifier leur processus de levée de fonds et à les mettre en relation avec des investisseurs actifs.",
+          "responsibilities": [
+            "Personnalisation du thème Keycloak pour l'intégration front-end sécurisée",
+            "Développement du module de paiement Stripe et gestion des accès côté client et serveur",
+            "Structuration claire du projet Angular pour optimiser la gestion du code source",
+            "Implémentation de la logique métier avec Spring Boot pour des API REST performantes",
+            "Conception et développement d'interfaces avec HTML, CSS, TypeScript",
+            "Création de composants réutilisables (boutons, formulaires, modales...)",
+            "Réalisation de tests système et de régression",
+            "Débogage, améliorations et maintenance après mise en production"
+          ],
+          "technologies": [
+            "Angular 14",
+            "NGRX",
+            "Stripe",
+            "Java 11",
+            "Spring Boot",
+            "Spring Security",
+            "Docker",
+            "Keycloak 19",
+            "OAuth2",
+            "JHipster",
+            "Bootstrap",
+            "SCSS",
+            "PostgreSQL",
+            "Jira",
+            "Bamboo",
+            "Git",
+            "Microservices"
+          ]
+        },
+        {
+          "name": "Clever Harvest",
+          "period": "Juillet 2022 – Avril 2023",
+          "team": "Product Owner, 2 Développeurs web, Team Lead, Testeur",
+          "methodology": "Agile Scrum",
+          "description": "Plateforme de suivi de la chaîne alimentaire permettant de tracer les olives, le café et le cacao, avec génération de QR codes retraçant leur parcours.",
+          "responsibilities": [
+            "Personnalisation du thème Keycloak pour un SSO sécurisé",
+            "Structuration du projet Angular pour une gestion efficace du code source",
+            "Implémentation de la logique métier avec Spring Boot et développement d'API REST",
+            "Création d'interfaces responsives avec HTML, CSS, TypeScript",
+            "Création de composants réutilisables pour optimiser le développement",
+            "Participation aux réunions client et maintenance des microservices",
+            "Réalisation de tests de régression et correction des anomalies"
+          ],
+          "technologies": [
+            "Angular 14",
+            "Java 11",
+            "Spring Boot",
+            "Spring Security",
+            "Docker",
+            "Keycloak 16",
+            "OAuth2",
+            "JHipster",
+            "Bootstrap",
+            "SCSS",
+            "PostgreSQL",
+            "Jira",
+            "Bamboo",
+            "Git",
+            "Microservices"
+          ]
+        },
+        {
+          "name": "Planet Tax Solution",
+          "period": "Avril 2022 – Juillet 2022",
+          "team": "Product Owner, 4 Développeurs, Team Lead, Testeur",
+          "methodology": "Agile Scrum",
+          "description": "Application de centralisation des données fiscales des commerçants, intégrant des visualisations et des statistiques.",
+          "responsibilities": [
+            "Création de tableaux de bord statistiques avec Apex Charts",
+            "Optimisation de l'UX/UI en collaboration avec l'équipe design",
+            "Développement d'interfaces et de composants réutilisables",
+            "Intégration sécurisée avec le back-end Spring Boot"
+          ],
+          "technologies": [
+            "Angular 13",
+            "Java 11",
+            "Spring Boot",
+            "Spring Security",
+            "Docker",
+            "Keycloak 16",
+            "OAuth2",
+            "JHipster",
+            "Bootstrap",
+            "SCSS",
+            "PostgreSQL",
+            "Jira",
+            "Git",
+            "Micro-Frontends",
+            "Microservices"
+          ]
+        },
+        {
+          "name": "Temenos Test Automation",
+          "period": "Janvier 2021 – Avril 2022",
+          "team": "Product Owner, 2 Développeurs web, Team Lead, Testeur",
+          "methodology": "Agile Scrum",
+          "description": "Automatisation des tests de l'application bancaire Temenos T24 afin d'améliorer la précision des résultats et réduire les délais de validation.",
+          "responsibilities": [
+            "Création de visualisations de données avec Apex Charts",
+            "Élaboration d'organigrammes illustrant les relations entre entités",
+            "Optimisation de l'UX/UI et développement de composants Angular réutilisables",
+            "Intégration avec le Back-End en collaboration avec l'équipe serveur"
+          ],
+          "technologies": [
+            "Angular 13",
+            "Java 11",
+            "Spring Boot",
+            "Spring Security",
+            "Docker",
+            "Keycloak 16",
+            "OAuth2",
+            "JHipster",
+            "Bootstrap",
+            "SCSS",
+            "PostgreSQL",
+            "Jira",
+            "Git"
+          ]
+        }
+      ]
+    }
+  ],
+  "softSkills": [
+    "Résolution de problèmes",
+    "Adaptabilité",
+    "Esprit d'équipe",
+    "Pensée analytique",
+    "Gestion du stress"
+  ]
+}
