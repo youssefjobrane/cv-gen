@@ -365,15 +365,27 @@
         }
 
         @media print {
-            body { background: white; }
-            .no-print { display: none; }
+            body { 
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .no-print, #cv-toolbar { 
+                display: none !important; 
+            }
             .cv-container {
                 margin: 0;
                 box-shadow: none;
                 width: 100%;
-                padding: 20px;
+                padding: 0;
             }
-            .language-btn { display: none; }
+            .language-btn { 
+                display: none; 
+            }
+            @page {
+                margin: 0;
+                size: A4;
+            }
         }
     </style>
 </head>
@@ -625,45 +637,136 @@
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                const jsonData = JSON.parse(e.target.result);
-                // Update the CV with the loaded data
-                if (window.cvData) {
-                    window.cvData = { ...window.cvData, ...jsonData };
-                } else {
-                    window.cvData = jsonData;
+                try {
+                    const jsonData = JSON.parse(e.target.result);
+                    // Update the CV with the loaded data
+                    if (window.cvData) {
+                        window.cvData = { ...window.cvData, ...jsonData };
+                    } else {
+                        window.cvData = jsonData;
+                    }
+                    
+                    // Update the load button to show filename
+                    const loadButton = document.getElementById('load-json-button');
+                    if (loadButton) {
+                        const maxLength = 20;
+                        let displayName = file.name;
+                        if (file.name.length > maxLength) {
+                            const start = file.name.substring(0, 10);
+                            const end = file.name.substring(file.name.length - 7);
+                            displayName = `${start}...${end}`;
+                        }
+                        loadButton.textContent = `Loaded: ${displayName}`;
+                        loadButton.title = `Loaded file: ${file.name}\nClick to load a different file`;
+                        loadButton.style.backgroundColor = '#28a745';
+                    }
+                    
+                    // Hide language switcher and show reset button
+                    const languageSwitcher = document.querySelector('.language-switcher');
+                    const resetButton = document.getElementById('reset-cv-button');
+                    
+                    if (languageSwitcher) {
+                        languageSwitcher.style.display = 'none';
+                    }
+                    if (resetButton) {
+                        resetButton.style.display = 'inline-block';
+                    }
+                    
+                    renderCV(currentLanguage);
+                } catch (error) {
+                    console.error('Error parsing JSON file:', error);
+                    alert('Error: The selected file is not a valid JSON file.');
                 }
-                renderCV(currentLanguage);
             };
             reader.readAsText(file);
         }
 
         // Add file input to the page
         function addFileUploadButton() {
+            // Create toolbar container
+            const toolbar = document.createElement('div');
+            toolbar.id = 'cv-toolbar';
+            toolbar.style.position = 'fixed';
+            toolbar.style.top = '20px';
+            toolbar.style.left = '20px';
+            toolbar.style.display = 'flex';
+            toolbar.style.gap = '10px';
+            toolbar.style.zIndex = '1000';
+            
+            // Create file input
             const fileInput = document.createElement('input');
             fileInput.type = 'file';
             fileInput.accept = '.json';
             fileInput.style.display = 'none';
             fileInput.addEventListener('change', handleFileUpload);
             
+            // Create load button
             const uploadButton = document.createElement('button');
+            uploadButton.id = 'load-json-button';
             uploadButton.textContent = 'Load JSON CV';
-            uploadButton.style.position = 'fixed';
-            uploadButton.style.top = '20px';
-            uploadButton.style.left = '20px';
             uploadButton.style.padding = '8px 16px';
             uploadButton.style.backgroundColor = '#007bff';
             uploadButton.style.color = 'white';
             uploadButton.style.border = 'none';
             uploadButton.style.borderRadius = '4px';
             uploadButton.style.cursor = 'pointer';
-            uploadButton.style.zIndex = '1000';
+            uploadButton.style.fontSize = '14px';
+            uploadButton.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            uploadButton.style.transition = 'all 0.2s';
+            uploadButton.title = 'Click to load a JSON CV file';
+            uploadButton.onmouseover = () => {
+                uploadButton.style.opacity = '0.9';
+                uploadButton.style.transform = 'translateY(-1px)';
+            };
+            uploadButton.onmouseout = () => {
+                uploadButton.style.opacity = '1';
+                uploadButton.style.transform = 'translateY(0)';
+            };
             uploadButton.onclick = (e) => {
                 e.preventDefault();
                 fileInput.click();
             };
             
+            // Create reset button (initially hidden)
+            const resetButton = document.createElement('button');
+            resetButton.id = 'reset-cv-button';
+            resetButton.textContent = 'Reset CV';
+            resetButton.style.padding = '8px 16px';
+            resetButton.style.backgroundColor = '#dc3545';
+            resetButton.style.color = 'white';
+            resetButton.style.border = 'none';
+            resetButton.style.borderRadius = '4px';
+            resetButton.style.cursor = 'pointer';
+            resetButton.style.fontSize = '14px';
+            resetButton.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            resetButton.style.transition = 'all 0.2s';
+            resetButton.style.display = 'none'; // Initially hidden
+            resetButton.title = 'Reset to default CV';
+            resetButton.onmouseover = () => {
+                resetButton.style.opacity = '0.9';
+                resetButton.style.transform = 'translateY(-1px)';
+            };
+            resetButton.onmouseout = () => {
+                resetButton.style.opacity = '1';
+                resetButton.style.transform = 'translateY(0)';
+            };
+            resetButton.onclick = (e) => {
+                e.preventDefault();
+                // Show language switcher before reloading
+                const languageSwitcher = document.querySelector('.language-switcher');
+                if (languageSwitcher) {
+                    languageSwitcher.style.display = 'flex';
+                }
+                window.location.reload();
+            };
+            
+            // Add elements to toolbar
+            toolbar.appendChild(uploadButton);
+            toolbar.appendChild(resetButton);
+            
+            // Add to document
             document.body.appendChild(fileInput);
-            document.body.appendChild(uploadButton);
+            document.body.appendChild(toolbar);
         }
 
         // Initialize the CV when the page loads
@@ -698,7 +801,9 @@
 
     <div class="no-print">
         <button class="btn-generate" onclick="window.print()">Générer PDF</button>
+<!--
         <button class="btn-generate" onclick="location.reload()" style="margin-left: 10px;">Rafraîchir</button>
+-->
     </div>
 
     <div class="cv-container">
