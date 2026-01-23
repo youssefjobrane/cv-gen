@@ -379,8 +379,16 @@
 </head>
 <body>
     <script>
-        // Current language state
-        let currentLanguage = 'fr';
+        // Current language state with URL parameter support
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentLanguage = urlParams.get('lang') || 'fr';
+        
+        // Function to update URL with current language
+        function updateUrlWithLanguage(lang) {
+            const url = new URL(window.location);
+            url.searchParams.set('lang', lang);
+            window.history.pushState({}, '', url);
+        }
 
         // Function to load JSON data based on language
         async function loadCVData(lang = 'fr') {
@@ -404,8 +412,22 @@
 
         // Function to render the CV
         async function renderCV(lang = currentLanguage) {
+            // Update current language and URL
             currentLanguage = lang;
+            updateUrlWithLanguage(lang);
+            
+            // Update HTML lang attribute
             document.documentElement.lang = lang;
+            
+            // Update active state of language buttons
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                const btnLang = btn.getAttribute('data-lang');
+                if (btnLang === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
             
             const data = await loadCVData(lang);
             if (!data) {
@@ -590,23 +612,29 @@
         // Initialize the CV when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             // Add language switcher to the page
-            const header = document.querySelector('header');
-            if (header) {
-                const languageSwitcher = document.createElement('div');
-                languageSwitcher.className = 'language-switcher';
-                languageSwitcher.innerHTML = `
-                    <button onclick="renderCV('fr')" class="language-btn ${currentLanguage === 'fr' ? 'active' : ''}">
-                        <span class="flag-icon flag-icon-fr"></span> FR
-                    </button>
-                    <button onclick="renderCV('en')" class="language-btn ${currentLanguage === 'en' ? 'active' : ''}">
-                        <span class="flag-icon flag-icon-gb"></span> EN
-                    </button>
-                `;
-                document.body.insertBefore(languageSwitcher, document.body.firstChild);
-            }
+            const languageSwitcher = document.createElement('div');
+            languageSwitcher.className = 'language-switcher';
+            languageSwitcher.innerHTML = `
+                <button onclick="renderCV('fr')" data-lang="fr" class="language-btn">
+                    <span class="flag-icon flag-icon-fr"></span> FR
+                </button>
+                <button onclick="renderCV('en')" data-lang="en" class="language-btn">
+                    <span class="flag-icon flag-icon-gb"></span> EN
+                </button>
+            `;
+            document.body.insertBefore(languageSwitcher, document.body.firstChild);
             
-            // Initial render
+            // Initial render with language from URL or default to 'fr'
             renderCV(currentLanguage);
+            
+            // Handle browser back/forward buttons
+            window.addEventListener('popstate', () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const newLang = urlParams.get('lang') || 'fr';
+                if (newLang !== currentLanguage) {
+                    renderCV(newLang);
+                }
+            });
         });
     </script>
 
