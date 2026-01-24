@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV JSON Data</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.10.2/jsoneditor.min.css" rel="stylesheet" type="text/css">
+    <style>
+        :root {
+            --bg-color: #1e1e1e;
+            --text-color: #d4d4d4;
+            --border-color: #404040;
+            --hover-bg: #2a2d2e;
+            --selected-bg: #37373d;
+            --primary: #0078d4;
+        }
+
+        body {
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', 'Monaco', monospace;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            background: var(--bg-color);
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        h1 {
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 400;
+            font-size: 1.8em;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 8px 15px;
+            background: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn.small {
+            padding: 4px 8px;
+            font-size: 12px;
+            min-width: 30px;
+        }
+
+        .btn.primary.small {
+            padding: 4px 8px;
+        }
+
+        .btn:hover {
+            background: #444;
+        }
+
+        .btn.primary {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn.primary:hover {
+            background: #1177bb;
+        }
+
+        .editor-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            height: 70vh;
+        }
+
+        .panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            overflow: hidden;
+            background: #1e1e1e;
+        }
+
+        .panel-header {
+            padding: 8px 15px;
+            background: #252526;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow: auto;
+            position: relative;
+        }
+
+        #json-display, #preview {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+        }
+
+        #preview {
+            padding: 15px;
+            color: var(--text-color);
+            font-family: inherit;
+            line-height: 1.5;
+            overflow-y: auto;
+        }
+
+        .loading {
+            text-align: center;
+            color: #858585;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .copy-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .copy-notification.show {
+            opacity: 1;
+        }
+
+        /* Customize JSON Editor theme */
+        .jsoneditor {
+            border: none !important;
+            background: #1e1e1e !important;
+        }
+
+        .jsoneditor-menu {
+            background-color: #252526 !important;
+            border-bottom: 1px solid var(--border-color) !important;
+        }
+
+        .jsoneditor-poweredBy {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <a href="template.html" class="btn">
+                <i class="fas fa-arrow-left"></i> Back to Template
+            </a>
+            <button id="copy-btn" class="btn primary">
+                <i class="far fa-copy"></i> Copy to Clipboard
+            </button>
+            <button id="view-mode" class="btn">
+                <i class="fas fa-code"></i> Toggle View
+            </button>
+        </div>
+        <div class="editor-container">
+            <div class="panel">
+                <div class="panel-header">
+                    <span>JSON Editor</span>
+                    <button id="format-json" class="btn small" title="Format JSON">
+                        <i class="fas fa-align-left"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div id="json-display" class="loading">Loading JSON data...</div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">
+                    <span>Live Preview</span>
+                    <button id="refresh-preview" class="btn small" title="Refresh Preview">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div id="preview">
+                        <div class="loading">Edit the JSON to see the preview</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="copy-notification" class="copy-notification">Copied to clipboard!</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.10.2/jsoneditor.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const jsonDisplay = document.getElementById('json-display');
+            const preview = document.getElementById('preview');
+            const copyBtn = document.getElementById('copy-btn');
+            const viewModeBtn = document.getElementById('view-mode');
+            const formatBtn = document.getElementById('format-json');
+            const refreshBtn = document.getElementById('refresh-preview');
+            const copyNotification = document.getElementById('copy-notification');
+
+            let editor;
+            let currentMode = 'tree';
+            let currentJson = null;
+
+            // Show copy notification
+            function showCopyNotification() {
+                copyNotification.classList.add('show');
+                setTimeout(() => {
+                    copyNotification.classList.remove('show');
+                }, 2000);
+            }
+
+            // Update the preview with the current JSON
+            function updatePreview() {
+                try {
+                    const json = editor.get();
+                    currentJson = json;
+                    preview.innerHTML = ''; // Clear previous preview
+
+                    // Create a preview of the JSON data
+                    const previewContent = document.createElement('div');
+                    previewContent.className = 'preview-content';
+
+                    // Add a simple preview of the JSON structure
+                    const renderPreview = (data, depth = 0) => {
+                        const container = document.createElement('div');
+                        container.style.marginLeft = `${depth * 15}px`;
+                        container.style.marginBottom = '5px';
+
+                        if (data && typeof data === 'object') {
+                            const isArray = Array.isArray(data);
+                            const entries = Object.entries(data);
+
+                            const summary = document.createElement('div');
+                            summary.style.cursor = 'pointer';
+                            summary.style.display = 'flex';
+                            summary.style.alignItems = 'center';
+                            summary.style.gap = '5px';
+
+                            const toggle = document.createElement('span');
+                            toggle.className = 'toggle';
+                            toggle.innerHTML = '▶';
+                            toggle.style.transition = 'transform 0.2s';
+
+                            const type = isArray ? `Array[${entries.length}]` : 'Object';
+                            summary.innerHTML = `<span class="toggle">▶</span> <span class="key">${type}</span> {${!isArray ? '...}' : `[${entries.length} items]`}`;
+
+                            const content = document.createElement('div');
+                            content.style.display = 'none';
+                            content.style.marginLeft = '15px';
+
+                            summary.addEventListener('click', () => {
+                                const isHidden = content.style.display === 'none';
+                                content.style.display = isHidden ? 'block' : 'none';
+                                const toggle = summary.querySelector('.toggle');
+                                toggle.style.transform = isHidden ? 'rotate(90deg)' : 'rotate(0)';
+                            });
+
+                            container.appendChild(summary);
+                            container.appendChild(content);
+
+                            entries.forEach(([key, value]) => {
+                                const item = document.createElement('div');
+                                item.style.marginBottom = '3px';
+
+                                if (value && typeof value === 'object') {
+                                    item.appendChild(renderPreview(value, depth + 1));
+                                } else {
+                                    const keySpan = document.createElement('span');
+                                    keySpan.className = 'key';
+                                    keySpan.textContent = `${key}: `;
+                                    keySpan.style.color = '#9cdcfe';
+
+                                    const valueSpan = document.createElement('span');
+                                    valueSpan.className = 'value';
+
+                                    if (typeof value === 'string') {
+                                        valueSpan.textContent = `"${value}"`;
+                                        valueSpan.style.color = '#ce9178';
+                                    } else if (typeof value === 'number') {
+                                        valueSpan.textContent = value;
+                                        valueSpan.style.color = '#b5cea8';
+                                    } else if (typeof value === 'boolean') {
+                                        valueSpan.textContent = value ? 'true' : 'false';
+                                        valueSpan.style.color = '#569cd6';
+                                    } else if (value === null) {
+                                        valueSpan.textContent = 'null';
+                                        valueSpan.style.color = '#569cd6';
+                                    }
+
+                                    item.appendChild(keySpan);
+                                    item.appendChild(valueSpan);
+                                }
+
+                                content.appendChild(item);
+                            });
+
+                            return container;
+                        }
+
+                        return container;
+                    };
+
+                    previewContent.appendChild(renderPreview(json));
+                    preview.appendChild(previewContent);
+
+                } catch (error) {
+                    console.error('Error updating preview:', error);
+                    preview.innerHTML = '<div class="error">Error generating preview</div>';
+                }
+            }
+
+            // Toggle between tree and code view
+            function toggleViewMode() {
+                currentMode = currentMode === 'tree' ? 'code' : 'tree';
+                editor.setMode(currentMode);
+                viewModeBtn.innerHTML = `<i class="fas fa-${currentMode === 'tree' ? 'code' : 'sitemap'}"></i> Toggle View`;
+                updatePreview();
+            }
+
+            // Format JSON
+            function formatJson() {
+                try {
+                    const json = editor.get();
+                    editor.set(JSON.parse(JSON.stringify(json, null, 2)));
+                } catch (error) {
+                    console.error('Error formatting JSON:', error);
+                }
+            }
+
+            // Event Listeners
+            copyBtn.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(JSON.stringify(editor.get(), null, 2));
+                    showCopyNotification();
+                } catch (error) {
+                    console.error('Failed to copy:', error);
+                }
+            });
+
+            viewModeBtn.addEventListener('click', toggleViewMode);
+            formatBtn.addEventListener('click', formatJson);
+            refreshBtn.addEventListener('click', updatePreview);
+
+            // Initialize JSON Editor
+            const options = {
+                mode: 'tree',
+                modes: ['tree', 'code'],
+                onError: function (err) {
+                    console.error('JSON Editor Error:', err);
+                },
+                onChange: function() {
+                    updatePreview();
+                },
+                theme: 'ace/theme/twilight',
+                search: true
+            };
+
+            // Load and display JSON
+            async function loadJson() {
+                try {
+                    // Try to load the language-specific JSON first, fall back to base if not found
+                    const lang = navigator.language.startsWith('fr') ? 'fr' : 'en';
+                    const response = await fetch(`cv-data-${lang}.json`);
+                    if (!response.ok) throw new Error('Language file not found');
+                    const jsonData = await response.json();
+
+                    // Initialize the JSON editor
+                    editor = new JSONEditor(jsonDisplay, options, jsonData);
+
+                    // Initial preview update
+                    updatePreview();
+                    
+                } catch (error) {
+                    console.error('Error loading JSON:', error);
+                    jsonDisplay.innerHTML = 'Error loading JSON data. Please check the console for details.';
+                    jsonDisplay.className = 'error';
+                }
+            }
+
+            loadJson();
+        });
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+</body>
+</html>

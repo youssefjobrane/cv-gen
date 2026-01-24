@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Editor - Live Preview</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #f72585;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #ef233c;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --editor-bg: #1e1e1e;
+            --border: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fb;
+            color: #333;
+            line-height: 1.6;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 1.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn i {
+            font-size: 0.9em;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--gray);
+        }
+
+        .btn-outline:hover {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 50%;
+            justify-content: center;
+            background: transparent;
+            color: var(--gray);
+        }
+
+        .btn-icon:hover {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .panel {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .panel-header {
+            padding: 0.75rem 1rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .resize-handle {
+            width: 4px;
+            background: var(--light-gray);
+            cursor: col-resize;
+            transition: background 0.2s;
+        }
+
+        .resize-handle:hover, .resize-handle.active {
+            background: var(--primary);
+        }
+
+        /* Editor and Preview Content */
+        .editor-content, .preview-content {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #editor {
+            width: 100%;
+            height: 100%;
+            border: none;
+            padding: 1.2rem;
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.7;
+            letter-spacing: 0.3px;
+            resize: none;
+            background: #1e1e2e;
+            color: #e0e0e0;
+            outline: none;
+            tab-size: 2;
+            caret-color: #f8f8f2;
+            border-radius: 0 0 6px 6px;
+            transition: all 0.2s ease;
+        }
+
+        #editor:focus {
+            box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.2);
+        }
+        
+        /* Enhanced JSON Syntax Highlighting */
+        #editor .string { 
+            color: #a6e3a1; /* Soft green for strings */
+        }
+        #editor .number { 
+            color: #f9c74f; /* Golden yellow for numbers */
+            font-weight: 500;
+        }
+        #editor .boolean { 
+            color: #ff79c6; /* Pink for booleans */
+            font-weight: 500;
+        }
+        #editor .null { 
+            color: #bd93f9; /* Purple for null */
+            font-style: italic;
+        }
+        #editor .key { 
+            color: #8be9fd; /* Cyan for keys */
+            font-weight: 500;
+        }
+        #editor .colon { 
+            color: #6272a4; /* Muted blue for colons */
+            opacity: 0.8;
+        }
+        #editor .bracket { 
+            color: #ffb86c; /* Orange for brackets */
+            opacity: 0.9;
+        }
+        #editor .comma { 
+            color: #f8f8f2; /* White for commas */
+            opacity: 0.7;
+        }
+        #editor .line-numbers { 
+            color: #6272a4; 
+            margin-right: 15px;
+            text-align: right;
+            user-select: none;
+            font-size: 0.9em;
+        }
+        
+        /* Selection highlight */
+        #editor::selection {
+            background: rgba(98, 114, 164, 0.3);
+            color: inherit;
+        }
+        
+        /* Scrollbar styling */
+        #editor::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        #editor::-webkit-scrollbar-thumb {
+            background: #44475a;
+            border-radius: 5px;
+        }
+        
+        #editor::-webkit-scrollbar-track {
+            background: #282a36;
+        }
+
+        #previewFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            padding: 0.5rem 1rem;
+            background: var(--dark);
+            color: white;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-item i {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification i {
+            font-size: 1.5rem;
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .notification.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-message {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.25rem;
+            margin-left: 0.5rem;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .notification-close:hover {
+            opacity: 1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .resize-handle {
+                width: 100%;
+                height: 4px;
+                cursor: row-resize;
+            }
+
+            .panel {
+                max-height: 50%;
+            }
+
+            .panel.collapsed {
+                max-height: 50px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .header-actions {
+                width: 100%;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .btn-text {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with logo and main actions -->
+    <header class="header">
+        <div class="header-left">
+            <a href="index.html" class="logo">
+                <i class="fas fa-file-alt"></i>
+                <span>CV Generator</span>
+            </a>
+        </div>
+        <div class="header-actions">
+            <button id="toggleLangBtn" class="btn btn-outline" title="Toggle Language">
+                <i class="fas fa-language"></i>
+                <span class="btn-text">Toggle Language</span>
+            </button>
+            <button id="formatBtn" class="btn btn-primary" title="Format JSON (Ctrl+Shift+F)">
+                <i class="fas fa-indent"></i>
+                <span class="btn-text">Format</span>
+            </button>
+        </div>
+    </header>
+    
+    <!-- Main content area with resizable panels -->
+    <div class="main-container">
+        <!-- Editor Panel -->
+        <div class="panel editor-container">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <i class="fas fa-code"></i>
+                    <span>JSON Editor</span>
+                </div>
+                <div class="panel-actions">
+                    <button id="minimizeEditor" class="btn btn-icon" title="Minimize">
+                        <i class="fas fa-window-minimize"></i>
+                    </button>
+                    <button id="maximizeEditor" class="btn btn-icon" title="Maximize">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="editor-content">
+                <textarea id="editor" spellcheck="false" placeholder="Loading CV data..."></textarea>
+            </div>
+        </div>
+        
+        <!-- Resize handle -->
+        <div class="resize-handle" title="Drag to resize"></div>
+        
+        <!-- Preview Panel -->
+        <div class="panel preview-container">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <i class="fas fa-eye"></i>
+                    <span>Live Preview</span>
+                </div>
+                <div class="panel-actions">
+                    <button id="refreshPreview" class="btn btn-icon" title="Refresh Preview">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button id="minimizePreview" class="btn btn-icon" title="Minimize">
+                        <i class="fas fa-window-minimize"></i>
+                    </button>
+                    <button id="maximizePreview" class="btn btn-icon" title="Maximize">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="preview-content">
+                <iframe id="previewFrame" src="template.html"></iframe>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-item">
+            <i class="fas fa-info-circle"></i>
+            <span id="status">Ready</span>
+        </div>
+        <div class="status-item">
+            <i class="fas fa-code"></i>
+            <span id="charCount">0 chars</span>
+        </div>
+        <div class="status-item">
+            <i class="fas fa-arrows-alt-h"></i>
+            <span id="cursorPosition">Ln 1, Col 1</span>
+        </div>
+    </div>
+    
+    <!-- Notification Container -->
+    <div id="notification" class="notification">
+        <i class="fas fa-info-circle"></i>
+        <div class="notification-content">
+            <div class="notification-title">Title</div>
+            <div class="notification-message">Message goes here</div>
+        </div>
+        <button class="notification-close">&times;</button>
+    </div>
+
+    <script>
+        // DOM Elements
+        const editor = document.getElementById('editor');
+        const previewFrame = document.getElementById('previewFrame');
+        const formatBtn = document.getElementById('formatBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const toggleLangBtn = document.getElementById('toggleLangBtn');
+        const refreshPreviewBtn = document.getElementById('refreshPreview');
+        const minimizeEditorBtn = document.getElementById('minimizeEditor');
+        const maximizeEditorBtn = document.getElementById('maximizeEditor');
+        const minimizePreviewBtn = document.getElementById('minimizePreview');
+        const maximizePreviewBtn = document.getElementById('maximizePreview');
+        const statusEl = document.getElementById('status');
+        const charCountEl = document.getElementById('charCount');
+        const cursorPositionEl = document.getElementById('cursorPosition');
+        const notificationEl = document.getElementById('notification');
+        const notificationCloseBtn = document.querySelector('.notification-close');
+        const resizeHandle = document.querySelector('.resize-handle');
+        
+        // State
+        let currentLang = 'fr';
+        let isDirty = false;
+        let changeTimer;
+        let isResizing = false;
+        let startX, startY, startWidth, startHeight;
+        let isEditorMaximized = false;
+        let isPreviewMaximized = false;
+
+        // Initialize
+        async function init() {
+            setupEventListeners();
+            // Set initial language button state
+            const toggleLangBtn = document.getElementById('toggleLangBtn');
+            if (toggleLangBtn) {
+                const langText = currentLang.toUpperCase();
+                const title = currentLang === 'fr' ? 'Switch to English' : 'Passer en Français';
+                toggleLangBtn.innerHTML = `<i class="fas fa-language"></i> ${langText}`;
+                toggleLangBtn.title = title;
+            }
+            document.documentElement.lang = currentLang;
+            // Load CV data
+            await loadCVData();
+            updateCharCount();
+            updateCursorPosition();
+        }
+
+        // Load CV data
+        async function loadCVData() {
+            try {
+                showNotification('Chargement des données...', 'info');
+                const response = await fetch(`cv-data-${currentLang}.json`);
+                const data = await response.json();
+                editor.value = JSON.stringify(data, null, 2);
+                updatePreview();
+                showNotification('Données chargées avec succès', 'success');
+            } catch (error) {
+                showNotification('Erreur lors du chargement des données', 'error');
+                console.error('Error loading CV data:', error);
+            }
+        }
+
+        // Update preview
+        function updatePreview() {
+            try {
+                const jsonData = editor.value;
+                const data = JSON.parse(jsonData);
+                
+                // Add preview mode class to the iframe body
+                previewFrame.onload = function() {
+                    const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+                    if (iframeDoc) {
+                        iframeDoc.body.classList.add('preview-mode');
+                    }
+                };
+                
+                previewFrame.contentWindow.postMessage({ 
+                    type: 'updatePreview',
+                    data: data
+                }, '*');
+                
+                isDirty = true;
+                updateCharCount();
+                showNotification('Aperçu mis à jour', 'success');
+            } catch (error) {
+                showNotification('Erreur dans le format JSON', 'error');
+            }
+        }
+
+        // Save changes
+        async function saveChanges() {
+            try {
+                const jsonData = editor.value;
+                JSON.parse(jsonData); // Validate JSON
+                
+                // In a real app, you would save to a server here
+                // For demo purposes, we'll just show a success message
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                isDirty = false;
+                showNotification('Modifications enregistrées avec succès', 'success');
+            } catch (error) {
+                showNotification('Erreur lors de la sauvegarde', 'error');
+                console.error('Save error:', error);
+            }
+        }
+
+        // Toggle language
+        function toggleLanguage() {
+            currentLang = currentLang === 'fr' ? 'en' : 'fr';
+            // Update the language button
+            const toggleLangBtn = document.getElementById('toggleLangBtn');
+            if (toggleLangBtn) {
+                const langText = currentLang.toUpperCase();
+                const title = currentLang === 'fr' ? 'Switch to English' : 'Passer en Français';
+                toggleLangBtn.innerHTML = `<i class="fas fa-language"></i> ${langText}`;
+                toggleLangBtn.title = title;
+            }
+            // Update HTML lang attribute
+            document.documentElement.lang = currentLang;
+            // Reload the CV data
+            loadCVData();
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info', title = '') {
+            const iconMap = {
+                'success': 'check-circle',
+                'error': 'exclamation-circle',
+                'warning': 'exclamation-triangle',
+                'info': 'info-circle'
+            };
+
+            const notification = notificationEl;
+            const icon = notification.querySelector('i');
+            const titleEl = notification.querySelector('.notification-title');
+            const messageEl = notification.querySelector('.notification-message');
+
+            // Set notification content
+            icon.className = `fas fa-${iconMap[type] || 'info-circle'}`;
+            titleEl.textContent = title || type.charAt(0).toUpperCase() + type.slice(1);
+            messageEl.textContent = message;
+
+            // Set notification type
+            notification.className = `notification ${type} show`;
+
+            // Auto-hide after 5 seconds
+            clearTimeout(notification.timeout);
+            notification.timeout = setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // Update character count
+        function updateCharCount() {
+            const count = editor.value.length;
+            charCountEl.textContent = `${count} chars`;
+        }
+
+        // Update cursor position
+        function updateCursorPosition() {
+            const cursorPos = editor.selectionStart;
+            const textBeforeCursor = editor.value.substring(0, cursorPos);
+            const lineNumber = (textBeforeCursor.match(/\n/g) || []).length + 1;
+            const columnNumber = cursorPos - textBeforeCursor.lastIndexOf('\n');
+            cursorPositionEl.textContent = `Ln ${lineNumber}, Col ${columnNumber}`;
+        }
+
+        // Toggle panel visibility
+        function togglePanel(panel, isMaximized) {
+            if (isMaximized) {
+                panel.style.flex = '0 0 50px';
+                panel.querySelector('.panel-content').style.display = 'none';
+            } else {
+                panel.style.flex = '1';
+                panel.querySelector('.panel-content').style.display = 'block';
+            }
+        }
+
+        // Add event listener helper function
+        function addEventListenerIfExists(element, event, handler) {
+            if (element) {
+                element.addEventListener(event, handler);
+                return true;
+            }
+            return false;
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Auto-update preview on changes with debounce
+            if (editor) {
+                editor.addEventListener('input', () => {
+                    clearTimeout(changeTimer);
+                    changeTimer = setTimeout(updatePreview, 500);
+                    updateCharCount();
+                });
+
+                // Track cursor position
+                editor.addEventListener('click', updateCursorPosition);
+                editor.addEventListener('keyup', updateCursorPosition);
+            }
+
+            // Format JSON
+            if (formatBtn) {
+                formatBtn.addEventListener('click', () => {
+                    try {
+                        const json = JSON.parse(editor.value);
+                        editor.value = JSON.stringify(json, null, 2);
+                        showNotification('JSON formaté avec succès', 'success');
+                    } catch (e) {
+                        showNotification('Erreur de formatage JSON', 'error');
+                    }
+                });
+            }
+
+            // Save button
+            if (saveBtn) {
+                saveBtn.addEventListener('click', saveChanges);
+            }
+
+            // Toggle language
+            if (toggleLangBtn) {
+                toggleLangBtn.addEventListener('click', toggleLanguage);
+            }
+
+            // Refresh preview
+            if (refreshPreviewBtn) {
+                refreshPreviewBtn.addEventListener('click', updatePreview);
+            }
+
+            // Minimize/Maximize editor
+            if (minimizeEditorBtn && maximizeEditorBtn) {
+                minimizeEditorBtn.addEventListener('click', () => {
+                    const editorPanel = document.querySelector('.editor-container');
+                    if (editorPanel) {
+                        editorPanel.classList.toggle('collapsed');
+                        minimizeEditorBtn.style.display = 'none';
+                        maximizeEditorBtn.style.display = 'flex';
+                    }
+                });
+            }
+
+            if (maximizeEditorBtn && minimizeEditorBtn) {
+                maximizeEditorBtn.addEventListener('click', () => {
+                    const editorPanel = document.querySelector('.editor-container');
+                    if (editorPanel) {
+                        editorPanel.classList.toggle('collapsed');
+                        maximizeEditorBtn.style.display = 'none';
+                        minimizeEditorBtn.style.display = 'flex';
+                    }
+                });
+            }
+
+            // Minimize/Maximize preview
+            if (minimizePreviewBtn && maximizePreviewBtn) {
+                minimizePreviewBtn.addEventListener('click', () => {
+                    const previewPanel = document.querySelector('.preview-container');
+                    if (previewPanel) {
+                        previewPanel.classList.toggle('collapsed');
+                        minimizePreviewBtn.style.display = 'none';
+                        maximizePreviewBtn.style.display = 'flex';
+                    }
+                });
+
+                maximizePreviewBtn.addEventListener('click', () => {
+                    const previewPanel = document.querySelector('.preview-container');
+                    if (previewPanel) {
+                        previewPanel.classList.toggle('collapsed');
+                        maximizePreviewBtn.style.display = 'none';
+                        minimizePreviewBtn.style.display = 'flex';
+                    }
+                });
+            }
+
+            // Close notification
+            if (notificationCloseBtn && notificationEl) {
+                notificationCloseBtn.addEventListener('click', () => {
+                    notificationEl.classList.remove('show');
+                });
+            }
+
+            // Resize handle
+            if (resizeHandle) {
+                resizeHandle.addEventListener('mousedown', (e) => {
+                    isResizing = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    if (editor) {
+                        startWidth = parseInt(document.defaultView.getComputedStyle(editor).width, 10);
+                    }
+                    document.documentElement.style.cursor = 'col-resize';
+                    document.addEventListener('mousemove', handleResize);
+                    document.addEventListener('mouseup', stopResize);
+                });
+            }
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Format JSON (Ctrl+Shift+F)
+                if (e.ctrlKey && e.shiftKey && e.key === 'F') {
+                    e.preventDefault();
+                    formatBtn.click();
+                }
+                
+                // Save (Ctrl+S)
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    saveBtn.click();
+                }
+            });
+
+            // Handle window unload if there are unsaved changes
+            window.addEventListener('beforeunload', (e) => {
+                if (isDirty) {
+                    e.preventDefault();
+                    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+                    return e.returnValue;
+                }
+            });
+        }
+
+        // Handle resize
+        function handleResize(e) {
+            if (!isResizing) return;
+            
+            const container = document.querySelector('.main-container');
+            const editorPanel = document.querySelector('.editor-container');
+            const previewPanel = document.querySelector('.preview-container');
+            
+            const dx = e.clientX - startX;
+            const newWidth = startWidth + dx;
+            const containerWidth = container.offsetWidth;
+            const newPercentage = (newWidth / containerWidth) * 100;
+            
+            editorPanel.style.width = `${newPercentage}%`;
+            previewPanel.style.width = `${100 - newPercentage}%`;
+        }
+
+        // Stop resize
+        function stopResize() {
+            isResizing = false;
+            document.documentElement.style.cursor = '';
+            document.removeEventListener('mousemove', handleResize);
+            document.removeEventListener('mouseup', stopResize);
+        }
+
+        // Initialize the editor
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

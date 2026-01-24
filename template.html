@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Language" content="fr,en">
-    <meta http-equiv="refresh" content="0; url=template.html?lang=fr" id="metaRefresh">
     <title>CV Youssef Jobrane</title>
     <script>
         // Language detection and redirection
@@ -15,13 +14,12 @@
                 const supportedLangs = ['fr', 'en'];
                 const defaultLang = 'fr';
                 const detectedLang = supportedLangs.find(lang => userLang.startsWith(lang)) || defaultLang;
-                
-                // Update URL with language parameter
-                const newUrl = `${window.location.pathname}?lang=${detectedLang}`;
-                window.history.replaceState({}, '', newUrl);
-                
-                // Update the meta refresh tag
-                document.getElementById('metaRefresh').setAttribute('content', `0; url=${newUrl}`);
+
+                // Only update URL if not already in the correct language
+                if (detectedLang !== defaultLang) {
+                    const newUrl = `${window.location.pathname}?lang=${detectedLang}`;
+                    window.location.href = newUrl;
+                }
             }
         });
     </script>
@@ -29,6 +27,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.0/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Hide language switcher in preview mode */
+        body.preview-mode .language-switcher {
+            display: none;
+        }
+        
+        /* Show only Generate PDF button in preview mode */
+        body.preview-mode .language-switcher .btn-pdf {
+            display: flex;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        /* Hide other buttons in preview mode */
+        body.preview-mode .language-switcher > *:not(.btn-pdf),
+        body.preview-mode #load-json-button {
+            display: none !important;
+        }
+        
         .language-switcher {
             position: fixed;
             top: 20px;
@@ -36,6 +54,23 @@
             z-index: 1000;
             display: flex;
             gap: 10px;
+            align-items: center;
+        }
+        .help-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .help-btn:hover {
+            background: #f0f0f0;
         }
         .language-btn {
             background: white;
@@ -386,13 +421,13 @@
         }
 
         @media print {
-            body { 
+            body {
                 background: white;
                 padding: 0;
                 margin: 0;
             }
-            .no-print, #cv-toolbar { 
-                display: none !important; 
+            .no-print, #cv-toolbar {
+                display: none !important;
             }
             .cv-container {
                 margin: 0;
@@ -400,8 +435,8 @@
                 width: 100%;
                 padding: 0;
             }
-            .language-btn { 
-                display: none; 
+            .language-btn {
+                display: none;
             }
             @page {
                 margin: 0;
@@ -411,11 +446,12 @@
     </style>
 </head>
 <body>
+
     <script>
         // Current language state with URL parameter support
         const urlParams = new URLSearchParams(window.location.search);
         let currentLanguage = urlParams.get('lang') || 'fr';
-        
+
         // Function to update URL with current language
         function updateUrlWithLanguage(lang) {
             const url = new URL(window.location);
@@ -790,6 +826,20 @@
             document.body.appendChild(toolbar);
         }
 
+        // Handle preview updates from the editor
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'updatePreview') {
+                if (event.data.lang) {
+                    currentLanguage = event.data.lang;
+                    document.documentElement.lang = currentLanguage;
+                }
+                if (event.data.data) {
+                    cvData = event.data.data;
+                    renderCV(currentLanguage);
+                }
+            }
+        });
+
         // Initialize the CV when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             addFileUploadButton();
@@ -821,7 +871,7 @@
     </script>
 
     <div class="no-print">
-        <button class="btn-generate" onclick="window.print()">Générer PDF</button>
+        <button class="btn-generate btn-pdf" onclick="window.print()">Générer PDF</button>
 <!--
         <button class="btn-generate" onclick="location.reload()" style="margin-left: 10px;">Rafraîchir</button>
 -->

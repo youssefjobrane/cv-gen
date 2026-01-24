@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f6fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .card-header i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+
+        .card-text {
+            color: #7f8c8d;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        .btn-outline:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-edit {
+            background: var(--success-color);
+        }
+
+        .btn-edit:hover {
+            background: #27ae60;
+        }
+
+        .btn-live {
+            background: #9b59b6;
+        }
+
+        .btn-live:hover {
+            background: #8e44ad;
+        }
+
+        .btn-view {
+            background: var(--secondary-color);
+        }
+
+        .btn-view:hover {
+            background: #2980b9;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding: 2rem 0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CV Generator</h1>
+            <p class="subtitle">Create and manage your professional CV with ease</p>
+        </header>
+
+        <div class="card-container">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-eye"></i>
+                    <h2>View CV</h2>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">View your CV in a clean, professional format. Choose your preferred language.</p>
+                    <div class="btn-group">
+                        <a href="template.html?lang=fr" class="btn btn-view">
+                            <i class="fas fa-flag"></i> View French CV
+                        </a>
+                        <a href="template.html?lang=en" class="btn btn-view">
+                            <i class="fas fa-flag-usa"></i> View English CV
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-edit"></i>
+                    <h2>Edit CV Data</h2>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Edit your CV data in JSON format with our user-friendly editor.</p>
+                    <div class="btn-group">
+                        <a href="json-viewer.html" class="btn btn-edit">
+                            <i class="fas fa-code"></i> Edit JSON
+                        </a>
+                        <a href="live-edit-new.html" class="btn btn-live">
+                            <i class="fas fa-play"></i> Live Edit
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-file-upload"></i>
+                    <h2>Upload CV Data</h2>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Upload a JSON file to update your CV data.</p>
+                    <div class="btn-group">
+                        <a href="template.html" class="btn btn-upload" id="uploadBtn">
+                            <i class="fas fa-upload"></i> Upload JSON
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2024 CV Generator | Created with ❤️</p>
+        </footer>
+    </div>
+
+    <script>
+        // Add active class to current page in navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current year in footer
+            document.querySelector('footer p').innerHTML = `© ${new Date().getFullYear()} CV Generator | Created with ❤️`;
+            
+            // Handle upload button click
+            document.getElementById('uploadBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                // This will be handled by the template.html page
+                window.location.href = 'template.html?upload=true';
+            });
+        });
+    </script>
+</body>
+</html>
