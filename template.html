@@ -27,23 +27,52 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.0/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Hide language switcher in preview mode */
-        body.preview-mode .language-switcher {
-            display: none;
+        /* ── View mode (?lang=fr/en) ── */
+        body.view-mode .no-print,
+        body.view-mode .language-switcher,
+        body.view-mode #cv-toolbar {
+            display: none !important;
         }
-        
-        /* Show only Generate PDF button in preview mode */
-        body.preview-mode .language-switcher .btn-pdf {
-            display: flex;
+
+        /* ── Upload mode (?upload=true) ── */
+        body.upload-mode .no-print,
+        body.upload-mode .language-switcher {
+            display: none !important;
+        }
+
+        .view-pdf-btn {
             position: fixed;
-            top: 20px;
+            top: 16px;
             right: 20px;
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: background 0.2s, transform 0.15s;
         }
-        
-        /* Hide other buttons in preview mode */
-        body.preview-mode .language-switcher > *:not(.btn-pdf),
-        body.preview-mode #load-json-button {
+
+        .view-pdf-btn:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        @media print {
+            .view-pdf-btn { display: none !important; }
+        }
+
+        /* ── Preview mode (inside live-edit iframe) ── */
+        body.preview-mode .language-switcher,
+        body.preview-mode #cv-toolbar,
+        body.preview-mode .no-print {
             display: none !important;
         }
         
@@ -718,17 +747,10 @@
                         loadButton.style.backgroundColor = '#28a745';
                     }
                     
-                    // Hide language switcher and show reset button
-                    const languageSwitcher = document.querySelector('.language-switcher');
+                    // Show reset button if present (default mode)
                     const resetButton = document.getElementById('reset-cv-button');
-                    
-                    if (languageSwitcher) {
-                        languageSwitcher.style.display = 'none';
-                    }
-                    if (resetButton) {
-                        resetButton.style.display = 'inline-block';
-                    }
-                    
+                    if (resetButton) resetButton.style.display = 'inline-block';
+
                     renderCV(currentLanguage);
                 } catch (error) {
                     console.error('Error parsing JSON file:', error);
@@ -826,47 +848,77 @@
             document.body.appendChild(toolbar);
         }
 
-        // Handle preview updates from the editor
+        // Handle preview updates from the live editor (iframe postMessage)
         window.addEventListener('message', (event) => {
             if (event.data && event.data.type === 'updatePreview') {
+                document.body.classList.add('preview-mode');
                 if (event.data.lang) {
                     currentLanguage = event.data.lang;
                     document.documentElement.lang = currentLanguage;
                 }
                 if (event.data.data) {
-                    cvData = event.data.data;
+                    window.cvData = event.data.data;
                     renderCV(currentLanguage);
                 }
             }
         });
 
+        // Detect modes from URL params
+        const isViewMode   = urlParams.has('lang') && !urlParams.has('upload');
+        const isUploadMode = urlParams.get('upload') === 'true';
+
+        // Shared helper: add a floating PDF button
+        function addPdfButton() {
+            const pdfBtn = document.createElement('button');
+            pdfBtn.className = 'view-pdf-btn';
+            pdfBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Générer PDF';
+            pdfBtn.onclick = () => window.print();
+            document.body.appendChild(pdfBtn);
+        }
+
         // Initialize the CV when the page loads
         document.addEventListener('DOMContentLoaded', () => {
-            addFileUploadButton();
-            // Add language switcher to the page
-            const languageSwitcher = document.createElement('div');
-            languageSwitcher.className = 'language-switcher';
-            languageSwitcher.innerHTML = `
-                <button onclick="renderCV('fr')" data-lang="fr" class="language-btn">
-                    <span class="flag-icon flag-icon-fr"></span> FR
-                </button>
-                <button onclick="renderCV('en')" data-lang="en" class="language-btn">
-                    <span class="flag-icon flag-icon-gb"></span> EN
-                </button>
-            `;
-            document.body.insertBefore(languageSwitcher, document.body.firstChild);
-            
-            // Initial render with language from URL or default to 'fr'
+
+            if (isViewMode) {
+                // View mode: CV + PDF button only — no toolbar, no language switcher
+                document.body.classList.add('view-mode');
+                addPdfButton();
+
+            } else if (isUploadMode) {
+                // Upload mode: Load JSON toolbar + PDF button — no language switcher
+                document.body.classList.add('upload-mode');
+                addFileUploadButton();
+                addPdfButton();
+                // Auto-open file picker immediately
+                setTimeout(() => {
+                    const fileInput = document.querySelector('input[type="file"][accept=".json"]');
+                    if (fileInput) fileInput.click();
+                }, 300);
+
+            } else {
+                // Default mode: toolbar + language switcher
+                addFileUploadButton();
+
+                const languageSwitcher = document.createElement('div');
+                languageSwitcher.className = 'language-switcher';
+                languageSwitcher.innerHTML = `
+                    <button onclick="renderCV('fr')" data-lang="fr" class="language-btn">
+                        <span class="flag-icon flag-icon-fr"></span> FR
+                    </button>
+                    <button onclick="renderCV('en')" data-lang="en" class="language-btn">
+                        <span class="flag-icon flag-icon-gb"></span> EN
+                    </button>
+                `;
+                document.body.insertBefore(languageSwitcher, document.body.firstChild);
+
+                window.addEventListener('popstate', () => {
+                    const p = new URLSearchParams(window.location.search);
+                    const newLang = p.get('lang') || 'fr';
+                    if (newLang !== currentLanguage) renderCV(newLang);
+                });
+            }
+
             renderCV(currentLanguage);
-            
-            // Handle browser back/forward buttons
-            window.addEventListener('popstate', () => {
-                const urlParams = new URLSearchParams(window.location.search);
-                const newLang = urlParams.get('lang') || 'fr';
-                if (newLang !== currentLanguage) {
-                    renderCV(newLang);
-                }
-            });
         });
     </script>
 

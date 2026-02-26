@@ -28,7 +28,7 @@ To view and test your CV locally, you can use Python's built-in HTTP server:
    cd path/to/your/cv-project
    ```
 3. Start the local server on port 8000:
-   ```
+   ```bash
    python -m http.server 8000
    ```
 4. Open your web browser and visit:

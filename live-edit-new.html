@@ -454,6 +454,10 @@
                 <i class="fas fa-indent"></i>
                 <span class="btn-text">Format</span>
             </button>
+            <button id="saveBtn" class="btn btn-warning" title="Download JSON (Ctrl+S)" onclick="saveChanges()">
+                <i class="fas fa-download"></i>
+                <span class="btn-text">Download</span>
+            </button>
         </div>
     </header>
     
@@ -539,7 +543,6 @@
         const editor = document.getElementById('editor');
         const previewFrame = document.getElementById('previewFrame');
         const formatBtn = document.getElementById('formatBtn');
-        const saveBtn = document.getElementById('saveBtn');
         const toggleLangBtn = document.getElementById('toggleLangBtn');
         const refreshPreviewBtn = document.getElementById('refreshPreview');
         const minimizeEditorBtn = document.getElementById('minimizeEditor');
@@ -558,26 +561,28 @@
         let isDirty = false;
         let changeTimer;
         let isResizing = false;
-        let startX, startY, startWidth, startHeight;
-        let isEditorMaximized = false;
-        let isPreviewMaximized = false;
+        let startX, startWidth;
+        let isEditorCollapsed = false;
+        let isPreviewCollapsed = false;
 
         // Initialize
         async function init() {
             setupEventListeners();
-            // Set initial language button state
-            const toggleLangBtn = document.getElementById('toggleLangBtn');
-            if (toggleLangBtn) {
-                const langText = currentLang.toUpperCase();
-                const title = currentLang === 'fr' ? 'Switch to English' : 'Passer en Français';
-                toggleLangBtn.innerHTML = `<i class="fas fa-language"></i> ${langText}`;
-                toggleLangBtn.title = title;
-            }
+            updateLangButton();
             document.documentElement.lang = currentLang;
-            // Load CV data
             await loadCVData();
             updateCharCount();
             updateCursorPosition();
+        }
+
+        function updateLangButton() {
+            const btn = document.getElementById('toggleLangBtn');
+            if (btn) {
+                const langText = currentLang.toUpperCase();
+                const title = currentLang === 'fr' ? 'Switch to English' : 'Passer en Français';
+                btn.innerHTML = `<i class="fas fa-language"></i> ${langText}`;
+                btn.title = title;
+            }
         }
 
         // Load CV data
@@ -596,64 +601,45 @@
         }
 
         // Update preview
-        function updatePreview() {
+        function updatePreview(showFeedback = false) {
             try {
-                const jsonData = editor.value;
-                const data = JSON.parse(jsonData);
-                
-                // Add preview mode class to the iframe body
-                previewFrame.onload = function() {
-                    const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
-                    if (iframeDoc) {
-                        iframeDoc.body.classList.add('preview-mode');
-                    }
-                };
-                
-                previewFrame.contentWindow.postMessage({ 
+                const data = JSON.parse(editor.value);
+                previewFrame.contentWindow.postMessage({
                     type: 'updatePreview',
-                    data: data
+                    data: data,
+                    lang: currentLang
                 }, '*');
-                
                 isDirty = true;
                 updateCharCount();
-                showNotification('Aperçu mis à jour', 'success');
+                if (showFeedback) showNotification('Aperçu mis à jour', 'success');
             } catch (error) {
-                showNotification('Erreur dans le format JSON', 'error');
+                if (showFeedback) showNotification('Erreur dans le format JSON', 'error');
             }
         }
 
-        // Save changes
-        async function saveChanges() {
+        // Download JSON as file (replaces server-save which is not available)
+        function saveChanges() {
             try {
-                const jsonData = editor.value;
-                JSON.parse(jsonData); // Validate JSON
-                
-                // In a real app, you would save to a server here
-                // For demo purposes, we'll just show a success message
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
+                const json = JSON.parse(editor.value);
+                const blob = new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `cv-data-${currentLang}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
                 isDirty = false;
-                showNotification('Modifications enregistrées avec succès', 'success');
+                showNotification(`cv-data-${currentLang}.json téléchargé`, 'success');
             } catch (error) {
-                showNotification('Erreur lors de la sauvegarde', 'error');
-                console.error('Save error:', error);
+                showNotification('Erreur: JSON invalide', 'error');
             }
         }
 
         // Toggle language
         function toggleLanguage() {
             currentLang = currentLang === 'fr' ? 'en' : 'fr';
-            // Update the language button
-            const toggleLangBtn = document.getElementById('toggleLangBtn');
-            if (toggleLangBtn) {
-                const langText = currentLang.toUpperCase();
-                const title = currentLang === 'fr' ? 'Switch to English' : 'Passer en Français';
-                toggleLangBtn.innerHTML = `<i class="fas fa-language"></i> ${langText}`;
-                toggleLangBtn.title = title;
-            }
-            // Update HTML lang attribute
             document.documentElement.lang = currentLang;
-            // Reload the CV data
+            updateLangButton();
             loadCVData();
         }
 
@@ -701,24 +687,17 @@
             cursorPositionEl.textContent = `Ln ${lineNumber}, Col ${columnNumber}`;
         }
 
-        // Toggle panel visibility
-        function togglePanel(panel, isMaximized) {
-            if (isMaximized) {
-                panel.style.flex = '0 0 50px';
-                panel.querySelector('.panel-content').style.display = 'none';
-            } else {
-                panel.style.flex = '1';
-                panel.querySelector('.panel-content').style.display = 'block';
-            }
+        // Collapse/expand a panel
+        function collapsePanel(panel) {
+            const content = panel.querySelector('.editor-content, .preview-content');
+            panel.style.flex = '0 0 42px';
+            if (content) content.style.display = 'none';
         }
 
-        // Add event listener helper function
-        function addEventListenerIfExists(element, event, handler) {
-            if (element) {
-                element.addEventListener(event, handler);
-                return true;
-            }
-            return false;
+        function expandPanel(panel) {
+            const content = panel.querySelector('.editor-content, .preview-content');
+            panel.style.flex = '1';
+            if (content) content.style.display = '';
         }
 
         // Setup event listeners
@@ -727,11 +706,9 @@
             if (editor) {
                 editor.addEventListener('input', () => {
                     clearTimeout(changeTimer);
-                    changeTimer = setTimeout(updatePreview, 500);
+                    changeTimer = setTimeout(() => updatePreview(false), 500);
                     updateCharCount();
                 });
-
-                // Track cursor position
                 editor.addEventListener('click', updateCursorPosition);
                 editor.addEventListener('keyup', updateCursorPosition);
             }
@@ -749,11 +726,6 @@
                 });
             }
 
-            // Save button
-            if (saveBtn) {
-                saveBtn.addEventListener('click', saveChanges);
-            }
-
             // Toggle language
             if (toggleLangBtn) {
                 toggleLangBtn.addEventListener('click', toggleLanguage);
@@ -761,50 +733,46 @@
 
             // Refresh preview
             if (refreshPreviewBtn) {
-                refreshPreviewBtn.addEventListener('click', updatePreview);
+                refreshPreviewBtn.addEventListener('click', () => updatePreview(true));
             }
 
             // Minimize/Maximize editor
-            if (minimizeEditorBtn && maximizeEditorBtn) {
+            if (minimizeEditorBtn) {
                 minimizeEditorBtn.addEventListener('click', () => {
-                    const editorPanel = document.querySelector('.editor-container');
-                    if (editorPanel) {
-                        editorPanel.classList.toggle('collapsed');
-                        minimizeEditorBtn.style.display = 'none';
-                        maximizeEditorBtn.style.display = 'flex';
-                    }
+                    const panel = document.querySelector('.editor-container');
+                    isEditorCollapsed = true;
+                    collapsePanel(panel);
+                    minimizeEditorBtn.style.display = 'none';
+                    maximizeEditorBtn.style.display = 'flex';
                 });
             }
-
-            if (maximizeEditorBtn && minimizeEditorBtn) {
+            if (maximizeEditorBtn) {
                 maximizeEditorBtn.addEventListener('click', () => {
-                    const editorPanel = document.querySelector('.editor-container');
-                    if (editorPanel) {
-                        editorPanel.classList.toggle('collapsed');
-                        maximizeEditorBtn.style.display = 'none';
-                        minimizeEditorBtn.style.display = 'flex';
-                    }
+                    const panel = document.querySelector('.editor-container');
+                    isEditorCollapsed = false;
+                    expandPanel(panel);
+                    maximizeEditorBtn.style.display = 'none';
+                    minimizeEditorBtn.style.display = 'flex';
                 });
             }
 
             // Minimize/Maximize preview
-            if (minimizePreviewBtn && maximizePreviewBtn) {
+            if (minimizePreviewBtn) {
                 minimizePreviewBtn.addEventListener('click', () => {
-                    const previewPanel = document.querySelector('.preview-container');
-                    if (previewPanel) {
-                        previewPanel.classList.toggle('collapsed');
-                        minimizePreviewBtn.style.display = 'none';
-                        maximizePreviewBtn.style.display = 'flex';
-                    }
+                    const panel = document.querySelector('.preview-container');
+                    isPreviewCollapsed = true;
+                    collapsePanel(panel);
+                    minimizePreviewBtn.style.display = 'none';
+                    maximizePreviewBtn.style.display = 'flex';
                 });
-
+            }
+            if (maximizePreviewBtn) {
                 maximizePreviewBtn.addEventListener('click', () => {
-                    const previewPanel = document.querySelector('.preview-container');
-                    if (previewPanel) {
-                        previewPanel.classList.toggle('collapsed');
-                        maximizePreviewBtn.style.display = 'none';
-                        minimizePreviewBtn.style.display = 'flex';
-                    }
+                    const panel = document.querySelector('.preview-container');
+                    isPreviewCollapsed = false;
+                    expandPanel(panel);
+                    maximizePreviewBtn.style.display = 'none';
+                    minimizePreviewBtn.style.display = 'flex';
                 });
             }
 
@@ -820,10 +788,8 @@
                 resizeHandle.addEventListener('mousedown', (e) => {
                     isResizing = true;
                     startX = e.clientX;
-                    startY = e.clientY;
-                    if (editor) {
-                        startWidth = parseInt(document.defaultView.getComputedStyle(editor).width, 10);
-                    }
+                    const editorPanel = document.querySelector('.editor-container');
+                    startWidth = editorPanel.offsetWidth;
                     document.documentElement.style.cursor = 'col-resize';
                     document.addEventListener('mousemove', handleResize);
                     document.addEventListener('mouseup', stopResize);
@@ -832,25 +798,21 @@
 
             // Keyboard shortcuts
             document.addEventListener('keydown', (e) => {
-                // Format JSON (Ctrl+Shift+F)
                 if (e.ctrlKey && e.shiftKey && e.key === 'F') {
                     e.preventDefault();
-                    formatBtn.click();
+                    if (formatBtn) formatBtn.click();
                 }
-                
-                // Save (Ctrl+S)
                 if (e.ctrlKey && e.key === 's') {
                     e.preventDefault();
-                    saveBtn.click();
+                    saveChanges();
                 }
             });
 
-            // Handle window unload if there are unsaved changes
+            // Warn on unsaved changes
             window.addEventListener('beforeunload', (e) => {
                 if (isDirty) {
                     e.preventDefault();
                     e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-                    return e.returnValue;
                 }
             });
         }
@@ -858,18 +820,15 @@
         // Handle resize
         function handleResize(e) {
             if (!isResizing) return;
-            
             const container = document.querySelector('.main-container');
             const editorPanel = document.querySelector('.editor-container');
             const previewPanel = document.querySelector('.preview-container');
-            
             const dx = e.clientX - startX;
             const newWidth = startWidth + dx;
             const containerWidth = container.offsetWidth;
-            const newPercentage = (newWidth / containerWidth) * 100;
-            
-            editorPanel.style.width = `${newPercentage}%`;
-            previewPanel.style.width = `${100 - newPercentage}%`;
+            const newPercentage = Math.min(Math.max((newWidth / containerWidth) * 100, 20), 80);
+            editorPanel.style.flex = `0 0 ${newPercentage}%`;
+            previewPanel.style.flex = `0 0 ${100 - newPercentage}%`;
         }
 
         // Stop resize
