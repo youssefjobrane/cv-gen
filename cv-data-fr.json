@@ -35,31 +35,14 @@
       "level": "Courant"
     }
   ],
-  "skills": [
-    "Angular",
-    "HTML/SCSS",
-    "Bootstrap",
-    "Tailwind",
-    "TypeScript",
-    "NgRx",
-    "Java",
-    "Spring Boot",
-    "Spring Security",
-    "REST APIs",
-    "Keycloak",
-    "Docker",
-    "Jenkins",
-    "Kubernetes",
-    "PostgreSQL",
-    "MySQL",
-    "Git",
-    "Jira",
-    "Scrum",
-    "JHipster",
-    "OAuth2",
-    "Maven",
-    "Microservices"
-  ],
+  "skills": {
+    "Langages": ["Java", "JavaScript", "TypeScript", "HTML", "CSS/SCSS", "SQL"],
+    "Frameworks": ["Angular", "Bootstrap", "Tailwind", "Spring Boot", "Spring Security", "Maven", "JHipster", "NgRx"],
+    "Design Patterns": ["MVC", "Microservices", "Injection de dépendances"],
+    "Base de données": ["MySQL", "PostgreSQL"],
+    "Outils": ["Git", "Docker", "Keycloak", "OAuth2", "Jenkins", "Kubernetes", "Jira", "REST APIs"],
+    "Méthodologies": ["Agile", "Scrum"]
+  },
   "profile": "Développeur Full Stack passionné, spécialisé dans la conception d'applications web performantes et évolutives avec Angular et Spring Boot. Expérience dans l'intégration de solutions de paiement (Stripe), l'optimisation UX avec NgRx, et la gestion de l'authentification via Keycloak. Habitué aux méthodes Agile, je participe activement aux revues de code et à l'accompagnement des équipes pour garantir la qualité et la collaboration.",
   "education": [
     {

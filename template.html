@@ -277,7 +277,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
 
+        .skills-content {
+            align-items: stretch;
+            text-align: center;
         }
 
         .sidebar-content a {
@@ -611,23 +615,51 @@
             // Update skills
             const skillsContent = document.querySelector('.skills-content');
             if (skillsContent && data.skills) {
-                const skillsHTML = `
-                    <div style="display: flex; flex-wrap: wrap; gap: 4px; margin: 5px 0 15px 0;">
-                        ${data.skills.map(skill =>
-                            `<span style="display: inline-block;
-                                       margin: 0 6px 6px 0;
-                                       padding: 3px 10px;
-                                       background: #f5f5f5;
-                                       border: 1px solid #e0e0e0;
-                                       border-radius: 12px;
-                                       font-size: 13px;
-                                       color: #333;
-                                       white-space: nowrap;
-                                       box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                                ${skill}
-                            </span>`
-                        ).join('')}
+                const tagStyle = [
+                    'display:inline-block',
+                    'margin:2px 3px',
+                    'padding:3px 10px',
+                    'background:#f7f7f7',
+                    'border:1px solid #e2e2e2',
+                    'border-radius:20px',
+                    'font-size:11px',
+                    'color:#333',
+                    'white-space:nowrap',
+                    'letter-spacing:0.01em',
+                    'line-height:1.5'
+                ].join(';');
+
+                const dividerLine = `<div style="flex:1;height:1px;background:#d8d8d8;"></div>`;
+
+                const renderCategory = (category, items) => `
+                    <div style="margin-bottom:11px;width:100%;">
+                        <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;">
+                            ${dividerLine}
+                            <span style="
+                                font-size:9.5px;
+                                font-weight:700;
+                                text-transform:uppercase;
+                                letter-spacing:0.12em;
+                                color:#555;
+                                white-space:nowrap;
+                            ">${category}</span>
+                            ${dividerLine}
+                        </div>
+                        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:0;">
+                            ${items.map(s => `<span style="${tagStyle}">${s}</span>`).join('')}
+                        </div>
                     </div>`;
+
+                let skillsHTML = '';
+                if (Array.isArray(data.skills)) {
+                    skillsHTML = `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:0;">
+                        ${data.skills.map(s => `<span style="${tagStyle}">${s}</span>`).join('')}
+                    </div>`;
+                } else {
+                    skillsHTML = `<div style="width:100%;">` +
+                        Object.entries(data.skills).map(([cat, items]) => renderCategory(cat, items)).join('') +
+                    `</div>`;
+                }
                 skillsContent.innerHTML = skillsHTML;
             }
 
